@@ -1,0 +1,79 @@
+# @package _global_
+
+
+# to execute this experiment with single GPU run:
+# accelerate launch scripts/accelerate/acc_train.py experiment=acc_triplane_vae
+
+defaults:
+  - override /net_encode: triplane_vae
+  - override /data: triplane
+  - override /model: triplane_ae_trainer
+  - override /trainer: default
+  - override /logger: tensorboard     # default is null.
+
+
+# all parameters below will be merged with parameters from default configurations set above
+# this allows you to overwrite only specified parameters
+
+tags: ["train", "triplane", "vae"]
+seed: 12345
+experiment_name: "acc_triplane_vae_chair"
+
+# # resume training from checkpoint
+# ckpt_path: path/to/ckpt
+# resume_training: True
+
+logger: 
+  aim: # Should be the same as /logger
+    config: 
+      loggers: ["metric", "image", "mesh", "hparams"] # List and type of logging implementations 
+      tracked_variables: # The keys should match aim/loggers
+        metric: ["loss", "lr"]
+        image: ["render_rec", "render_gt"]
+        mesh: ["mesh_rec", "mesh_gt"]
+
+epochs: 8000
+    
+model:
+  net: ${net_encode}
+  loss:
+    losses: ["reconstruction", "kl_divergence"]
+    kl_weight: 1e-3
+    num_samples: ${data.config.num_samples}
+  scheduler:
+    lr_lambda:
+      max_epoch: ${epochs}
+
+data:
+  batch_size: 8
+  dataset:
+    _target_: unifi3d.data.data_iterators.ShapenetPreprocessedIterator
+    path: ${paths.shapenet_preprocessed_dir}
+    categories:
+      - "chair"
+    mode: "train"
+  val_dataset:
+    _target_: unifi3d.data.data_iterators.ShapenetPreprocessedIterator
+    path: ${paths.shapenet_preprocessed_dir}
+    categories:
+      - "chair"
+    mode: "val"
+  test_dataset:
+    _target_: unifi3d.data.data_iterators.ShapenetPreprocessedIterator
+    path: ${paths.shapenet_preprocessed_dir}
+    categories:
+      - "chair"
+    mode: "test"
+
+trainer:
+  max_epochs: ${epochs}
+  log_every_n_iter: 100
+  log_image_every_n_iters: 100
+  check_val_every_n_epoch: -1
+  save_checkpoint_every_n_epoch: 10
+  batch_post_process: null
+
+paths:
+  log_dir: ${paths.root_dir}/logs/${experiment_name}
+
+test: false

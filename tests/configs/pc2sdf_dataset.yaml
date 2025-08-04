@@ -1,0 +1,17 @@
+_target_: unifi3d.data.pcsdf_dataset.PCSDFDataModule
+dataset:
+    _target_: unifi3d.data.data_iterators.TestIterator
+    path: "knot"
+    mode: "test"
+config:
+    res: 64
+    sample_res: 64
+    num_near: 4096
+    num_far: 4096
+    padding: 0.2
+    level: 0.0
+    num_samples: 2048
+    thresh_clamp_sdf: 0.2
+    threshold: 0.001
+batch_size: 2
+num_workers: 0

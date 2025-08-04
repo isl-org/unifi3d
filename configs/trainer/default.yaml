@@ -1,0 +1,16 @@
+_target_: unifi3d.trainers.acc_trainer.Trainer
+
+default_root_dir: ${paths.output_dir} # Default path for logs and weights when no logger passed.
+max_epochs: -1 # Stop training once this number of epochs is reached. Disabled by default (-1).
+min_epochs: -1 # Force training for at least these many epochs. Disabled by default (-1).
+max_steps: -1 # Stop training after this number of steps. Disabled by default (-1).
+min_steps: -1 # Force training for at least these number of steps. Disabled by default (-1).
+check_val_every_n_epoch: -1 # Perform a validation loop every after every `N` training epochs. Disabled by default (-1).
+log_every_n_iter: 10 # How often to log within iterations. Default: 10.
+log_image_every_n_iters: -1 # Log images every N log cycle. Disabled by default (-1).
+save_checkpoint_every_n_epoch: 100 # Log checkpoints after every `N` training epochs. Default: 100.
+ckpt_num: 2 # Keep the latest N checkpoint to avoid oversaving checkpoints. Default: 5.
+loss_clip_val: 0.0 # The value at which to clip the loss. Default: 0.0.
+gradient_clip_val: 0.0 # The value at which to clip gradients. Default: 0.0.
+detect_anomaly: False # Enable anomaly detection for the autograd engine. Default: False
+profiling: ${profiling}

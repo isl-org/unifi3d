@@ -1,0 +1,40 @@
+_target_: unifi3d.data.dualoctree_dataset.DualOctreeDataset
+mode: "train"
+dataset:
+    _target_: unifi3d.data.data_iterators.ShapenetPreprocessedIterator
+    path: data/shapenet_preprocessed
+    mode: "train"
+    num_samples: -1              # For faster testing, you can restrict the reading to a small number. Set it to -1 if you do not intend to use it.
+
+config:
+    transform_config:
+        depth: 6                    # The octree depth starting from 0, synthetic room has depth up to 7.
+        full_depth: 2               # The full depth, from 6 up to level 2
+        node_dis: True              # True and there are normals, the octree features is 4 channels, i.e., the average normals and the 1 channel displacement. If node_dis is True, there are no normals, the feature is also 4 channels, i.e., a 3 channel (displacement of average points relative to the center points, and the last channel is constant)
+        split_label: True           # Save the split label
+        load_sdf: True
+        load_occu: False            # Defaults to False.
+        sample_surf_points: False   # Defaults to False.
+        adaptive: False             # Build the adaptive octree
+        node_feature: False         # Calculate the node feature
+        distort: False              # No data augmentation
+    create_mesh_config:
+        size: 160
+        mesh_scale: 0.6
+        sdf_scale: 0.9
+        resolution: 160             # used in eval. TODO: check if it is used.
+
+read_file:
+    _target_: unifi3d.data.dualoctree_dataset.ReadFile
+    load_sdf: ${config.transform_config.load_sdf}
+    load_occu: ${config.transform_config.load_occu}
+    file_number: -1
+
+transform:
+    _target_: unifi3d.data.dualoctree_dataset.TransformShape
+    config: ${config.transform_config}
+
+
+
+
+

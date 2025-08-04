@@ -1,0 +1,18 @@
+_target_: unifi3d.models.autoencoders.graph_vqvae.GraphVQVAE
+depth: 6
+channel_in: 4
+nout: 4
+full_depth: 2
+depth_out: 6
+resblk_type: basic
+bottleneck: 4
+code_channel: 8
+quantizer:
+  _target_: unifi3d.models.modules.quantizer.VectorQuantizer
+  codebook_size: 8192
+  latent_dim: 8 # sdf uses 3, we have a smaller volume, we can use original size 8 here.
+  beta: 1.0 # sdf uses 1.0
+  # _target_: unifi3d.models.modules.quantizer.SimpleQuantizer
+  # codebook_size: 256
+  # latent_dim: ${net_encode.code_channel}
+  # beta: 0.2

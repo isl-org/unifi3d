@@ -1,0 +1,51 @@
+# @package _global_
+
+# to execute this experiment run:
+# python scripts/benchmarking.py benchmark=dualoctree_vqvae
+
+defaults:
+  - override /data: dualoctree_shape
+  - override /model: graph_doctree
+  - override /net_encode: doctree_vqvae
+  - override /trainer: default
+
+# all parameters below will be merged with parameters from default configurations set above
+# this allows you to overwrite only specified parameters
+
+task_name: "benchmarking"
+experiment_name: dualoctree_vqvae_chair_eval
+categories: 
+  - "chair"
+plot_mesh: True
+limit: -1 # Run on all dataset
+output_path: ${paths.shared_ae_output_folder}/Chair/dualoctree_vqvae
+
+ckpt_path: checkpoints/dualoctree_vqvae_chair.safetensors
+
+train: false
+tags: ["benchmark", "shapenet", "dualoctree", "graph_vqvae"]
+
+seed: 12345
+mixed_precision: "no"
+octree_depth: 6
+full_depth: 2
+
+data:
+  train_batch_size: 1
+  val_batch_size: 1
+  test_batch_size: 1
+  data_train:
+    dataset:
+      num_samples: 1
+  data_test:
+    dataset:
+      num_samples: -1 # make the loading faster.
+  data_val:
+    dataset:
+      num_samples: 1
+
+paths:
+  log_dir: ${paths.root_dir}/logs/${experiment_name}
+
+test: True
+profiling: null

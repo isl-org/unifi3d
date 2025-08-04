@@ -1,0 +1,76 @@
+# @package _global_
+
+# to execute this experiment:
+# accelerate launch scripts/accelerate/acc_train.py experiment=overfit_diffuse_doctree_vae_unet.yaml
+
+defaults:
+  - override /data: dualoctree_shape
+  - override /model: diffusion
+  - override /net_encode: graph_vae_object
+  - override /net_denoise: unet
+  - override /trainer: default
+  - override /logger: aim
+
+# all parameters below will be merged with parameters from default configurations set above
+# this allows you to overwrite only specified parameters
+
+tags: ["train", "dualoctree", "diffusion"]
+
+seed: 12345
+experiment_name: doctree_vae_unet_shapenet_airplane_${trainer.max_epochs}epoch_bs${data.train_batch_size}_s${data.data_train.dataset.num_samples}_code${net_encode.code_channel}_patchembed3d
+categories: 
+  - "airplane"
+
+data:
+  train_batch_size: 1
+  val_batch_size: 1
+  test_batch_size: 1
+  data_train:
+    dataset:
+      num_samples: 1
+  data_test:
+    dataset:
+      num_samples: 1
+  data_val:
+    dataset:
+      num_samples: 1
+
+net_encode:
+  ckpt_path: ${paths.dualoctree_vae_airplane_ckpt}
+  code_channel: 8 # Update this number based on the ckpt it uses.
+
+net_denoise:
+  dims: 3
+  image_size: 4 # 16
+  in_channels: ${net_encode.code_channel} # 3
+  out_channels: ${net_encode.code_channel} # 3
+  model_channels: 192
+  num_res_blocks: 2
+  attention_resolutions:  [1, 2, 4] #[ 1,2,4 ] # 16, 8, 4
+  # note: this isn\t actually the resolution but
+  # the downsampling factor, i.e. this corresnponds to
+  # attention on spatial resolution 8,16,32, as the
+  # spatial reolution of the latents is 64 for f4
+  channel_mult: [1] # [ 1,2,4,4 ] adding 2 seems to have skip unevenly between w,h,d
+  # num_head_channels: 32
+  num_heads: 6
+
+diffusion_sampler:
+  clip_sample: True
+
+model:
+  encoder_decoder: ${net_encode}
+  diff_model: ${net_denoise}
+  sampling_scheduler: ${diffusion_sampler}
+
+trainer:
+  max_epochs: 3600
+  log_every_n_iter: 10
+  check_val_every_n_epoch: -1
+  ckpt_num: 3
+  batch_post_process: null
+
+paths:
+  log_dir: ${paths.root_dir}/logs/hq3dfm/shapenet/dualoctree_unet/${experiment_name}
+
+test: false

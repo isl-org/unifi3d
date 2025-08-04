@@ -1,0 +1,13 @@
+_target_: unifi3d.data.shap_e_dataset.ShapEDataModule
+dataset:
+  _target_: unifi3d.data.data_iterators.TestIterator
+  mode: "test"
+config:
+  device: cuda
+  mv_light_mode: basic
+  mv_image_size: 256
+  name: shapenet
+  cache_path: "work_dir_unifi3d/data/shapenet_for_shap_e"
+  padding: 0.0
+batch_size: 1
+num_workers: 0

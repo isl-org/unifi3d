@@ -1,0 +1,31 @@
+#@package _global_
+
+# to execute this experiment run:
+# python benchmarking.py benchmark=example.yaml
+
+defaults:
+  - _self_
+  - data: null
+  - model: null
+  - net_encode: null
+  - logger: null
+  - paths: default
+  - trainer: default
+  # benchmark configs allow for version control of specific hyperparameters
+  # e.g. best hyperparameters for given model and datamodule
+  - benchmark: null
+  - metrics: default
+
+task_name: "benchmark"
+
+tags: ["benchmark"]
+
+
+ckpt_path: ??? # passing checkpoint path is necessary for benchmarking e.g. "./logs/checkpoints/00010/model.safetensors"
+output_path: ??? # e.g."./logs/eval"
+representation: null
+label_path: null
+limit: 4
+align_scale: false # if true, the predicted mesh is scaled to match the size of the real mesh
+mesh_scale: 0.8 # scale meshes by 0.4 as in preprocessed ShapeNet
+plot_mesh: true

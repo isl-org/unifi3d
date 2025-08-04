@@ -1,0 +1,48 @@
+# @package _global_
+
+# to execute this experiment with single GPU run:
+# accelerate launch scripts/acc_train.py experiment=dualoctree_ae.yaml
+
+# For multi-GPU training run:
+# accelerate launch scripts/acc_train.py trainer=ddp experiment=dualoctree_ae.yaml
+
+# For faster training debugging with fewer samples on a single GPU:
+# accelerate launch scripts/acc_train.py experiment=dualoctree_ae.yaml data.config.num_samples=10
+
+defaults:
+  - override /data: <data_name>             # in configs/data, e.g., "sdf"
+  - override /model: <model_name>           # in configs/model, e.g., "vqvae"
+  - override /net_encode: <net_encode_name> # in configs/net_encode, e.g., "vqvae"
+  - override /trainer: <trainer_name>       # in configs/net_encode, e.g., "default"
+  # - override /logger: aim     # default is null.
+
+# all parameters below will be merged with parameters from default configurations set above
+# this allows you to overwrite only specified parameters
+
+# tags: <list of tags> # e.g., ["train", "sdf", "vqvae"]
+
+seed: 12345
+
+model: # set the models arguments here
+  net: ${net_encode}
+
+data:
+  batch_size: <batch_size>          # e.g., 2
+  dataset:
+    _target_: <data_iterator_class> # e.g., unifi3d.data.data_iterators.ShapenetIterator
+    path: <path_to_dataset>         # e.g., "datasets/ShapeNetCore.v1"
+    mode: "train"                   # options: "train", "val", "test"
+
+trainer:
+  max_epochs: 100
+  check_train_every_n_iter: 1000
+  check_val_every_n_epoch: 100
+  experiment: "acc_sdf_vqvae"
+
+  batch_post_process: null
+
+paths:
+  data_dir: <path_to_dataset> # e.g., datasets/ShapeNetCore.v1 # Change this to corresponding directory.
+  log_dir: <path_to_logdir>   # e.g., ${paths.root_dir}/logs/sdf/acc_vqvae/
+
+test: false

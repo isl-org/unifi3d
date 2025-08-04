@@ -1,0 +1,39 @@
+_target_: unifi3d.data.dualoctree_dataset.DualOctreeDataset
+mode: "train"
+
+dataset:
+    _target_: unifi3d.data.data_iterators.SyntheticRoomIterator
+    path: datasets/DualOctreeGNN/DualOctreeGNN/data/room
+    mode: "train"
+    num_samples: -1              # For faster testing, you can restrict the reading to a small number. Set it to -1 if you do not intend to use it.
+
+config:
+    transform_config:
+        load_occu: True
+        sample_surf_points: True
+        depth: 7                    # The octree depth starting from 0, synthetic room has depth up to 7.
+        full_depth: 3               # The full depth, from 7 up to level 3
+        node_dis: True              # True and there are normals, the octree features is 4 channels, i.e., the average normals and the 1 channel displacement. If node_dis is True, there are no normals, the feature is also 4 channels, i.e., a 3 channel (displacement of average points relative to the center points, and the last channel is constant)
+        split_label: True           # Save the split label
+        adaptive: False             # Build the adaptive octree
+        node_feature: False         # Calculate the node feature
+        distort: True
+    create_mesh_config:
+        size: 280
+        mesh_scale: 0.6
+        sdf_scale: 0.9
+
+read_file:
+    _target_: unifi3d.data.dualoctree_dataset.ReadFile
+    load_occu: True
+    load_sdf: False
+    file_number: 10
+
+transform:
+    _target_: unifi3d.data.dualoctree_dataset.TransformScene
+    config: ${config.transform_config}
+
+
+
+
+

@@ -1,0 +1,14 @@
+c_dim: 128
+dim_encoder: 3
+dim_decoder: 51
+hidden_encoder: 512
+hidden_decoder: 256
+decoder_type: "decoder"
+sdf2occ_factor: -1.0 
+w_sdf: 1.0
+w_reg: 0.001
+near_th: -1
+w_near: 1.0
+w_far: 1.0
+N_pe: 8
+res: 64

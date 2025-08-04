@@ -1,0 +1,14 @@
+_target_: unifi3d.models.autoencoders.shape2vecset_vae.Shape2VecSetVAE
+depth: 24
+dim: 512
+queries_dim: 512
+output_dim: 1
+num_inputs: 2048
+num_latents: 512
+latent_dim: 64 # 1, 2, 4, 8, 16, 32, 64, 128, 256, 512
+heads: 8
+dim_head: 64
+density_grid_points: 64 # at inference time, using query points in a grid 
+weight_tie_layers: False
+decoder_ff: False
+layer_norm_encoding: True

@@ -1,0 +1,31 @@
+model:
+  c_dim: 32
+  encoder: pointnet_local_pool
+  encoder_kwargs:
+    hidden_dim: 32
+    plane_type: ['xz', 'xy', 'yz']
+    plane_resolution: 64
+    use_layer_norm: False
+    unet: True
+    unet_kwargs:
+      depth: 4
+      merge_mode: concat
+      start_filts: 32
+  decoder: simple_local
+  decoder_kwargs:
+    sample_mode: bilinear # bilinear / nearest
+    hidden_size: 32
+  padding: 0.1
+  dim: 3
+  triplane_feature_mode: token
+generation:
+  resolution_0: 32
+  upsampling_steps: 2
+  use_sampling: false
+  refinement_step: 0
+  simplify_nfaces: null
+test:
+  threshold: 0.2
+data:
+  input_type: pointcloud
+  padding: 0.1

@@ -1,0 +1,26 @@
+_target_: unifi3d.trainers.encoder_decoder_trainer.EncoderDecoderTrainer
+
+optimizer:
+  _target_: torch.optim.AdamW
+  _partial_: true
+  lr: 0.001
+  weight_decay: 0.01
+
+scheduler:
+  _target_: torch.optim.lr_scheduler.LambdaLR
+  lr_lambda:
+    _target_: unifi3d.utils.scheduler.lambda_lr_utils.get_lambda_lr_poly
+    max_epoch: ${trainer.max_epochs}
+    lr_power: 0.9
+  _partial_: true
+
+net: ${net_encode}
+
+loss:
+  _target_: unifi3d.losses.autoencoders.dualoctree_losses.synthetic_room_loss
+  reg_loss_type: possion_grad_loss # Not in use.
+  _partial_: true
+
+loss_requires_grad: true
+# compile model for faster training with pytorch 2.0
+compile: false

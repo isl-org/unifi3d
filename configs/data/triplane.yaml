@@ -1,0 +1,35 @@
+_target_: unifi3d.data.pointcloud_dataset.PointCloudDataModule
+dataset:
+  _target_: unifi3d.data.data_iterators.ShapenetPreprocessedIterator
+  path: ${paths.shapenet_preprocessed_dir}
+  categories:
+    - "chair"
+  mode: "train"
+val_dataset:
+  _target_: unifi3d.data.data_iterators.ShapenetPreprocessedIterator
+  path: ${paths.shapenet_preprocessed_dir}
+  categories:
+    - "chair"
+  mode: "val"
+test_dataset:
+  _target_: unifi3d.data.data_iterators.ShapenetPreprocessedIterator
+  path: ${paths.shapenet_preprocessed_dir}
+  categories:
+    - "chair"
+  mode: "test"
+config:
+  num_samples: 2048
+  num_occu_points: 4096
+  level: 0
+  padding: 0.2
+  sampling_strategy: "near_far"
+  threshold_near: 0.01 # only relevant if strategy is "near_far"
+  fraction_near: 0.5 # only relevant if strategy is "near_far"
+  sdf_threshold: 0.005
+  transform_data: true
+  #sdf_file: sdf_grid256_path
+  #sdf_file: sdf_grid128_path
+  sdf_file: sdf_octree_path
+  save_mesh: false
+batch_size: 8
+num_workers: 0

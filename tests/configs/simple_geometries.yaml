@@ -1,0 +1,65 @@
+_target_: unifi3d.data.base_datamodule.BaseDataModule
+num_workers: 0
+data_train:
+  _target_: unifi3d.data.simple_geometries.SimpleGeometries
+  mode: train
+  config:
+    num_surface_points: 2000
+    num_query_points: 3000
+    near_surface_threshold: 2 # 2.0, 1 to 10 if not normalized
+    sdf_mode: "euclidean"
+    padding: 0.0
+    threshold_near: 0.01 # only relevant if strategy is near_far sampling.
+    fraction_near: 0.5 # only relevant if strategy is near_far sampling.
+    num_occu_points: 40
+    dimension: 3
+    sdf_threshold: 0.0 # 0.005
+    range: 0.5
+    grid_resolution: 64
+    shape_names:
+      - "sphere"
+
+
+data_val:
+  _target_: unifi3d.data.simple_geometries.SimpleGeometries
+  mode: val
+  config:
+    num_surface_points: 2000
+    num_query_points: 3000
+    near_surface_threshold: 2
+    sdf_mode: "euclidean"
+    padding: 0.0
+    threshold_near: 0.01 # only relevant if strategy is near_far sampling.
+    fraction_near: 0.5 # only relevant if strategy is near_far sampling.
+    num_occu_points: 40
+    dimension: 3
+    sdf_threshold: 0.0 # 0.005
+    range: 0.5
+    grid_resolution: 64
+    shape_names:
+      - "sphere"
+
+
+data_test:
+  _target_: unifi3d.data.simple_geometries.SimpleGeometries
+  mode: test
+  config:
+    num_surface_points: 2000
+    num_query_points: 3000
+    near_surface_threshold: 2
+    sdf_mode: "euclidean"
+    padding: 0.0
+    threshold_near: 0.01 # only relevant if strategy is near_far sampling.
+    fraction_near: 0.5 # only relevant if strategy is near_far sampling.
+    num_occu_points: 40
+    dimension: 3
+    sdf_threshold: 0.0 # 0.005
+    range: 0.5
+    grid_resolution: 64
+    shape_names:
+      - "sphere"
+
+
+train_batch_size: 1
+val_batch_size: 1
+test_batch_size: 1

@@ -1,0 +1,85 @@
+# @package _global_
+
+# example hyperparameter optimization of some experiment with Optuna:
+# python scripts/accelerate/acc_train.py hparams_search=acc_sdfusion_optuna experiment=acc_sdfusion
+
+defaults:
+  - override /hydra/sweeper: optuna
+
+data:
+  batch_size: 8
+  dataset:
+    _target_: unifi3d.data.data_iterators.ShapenetPreprocessedIterator
+    path: ${paths.shapenet_preprocessed_dir}
+    categories: 
+      - "airplane"
+    mode: "train"
+    num_samples: 4
+  val_dataset:
+    _target_: unifi3d.data.data_iterators.ShapenetPreprocessedIterator
+    path: ${paths.shapenet_preprocessed_dir}
+    categories: 
+      - "airplane"
+    mode: "val"
+    num_samples: 4
+  test_dataset:
+    _target_: unifi3d.data.data_iterators.ShapenetPreprocessedIterator
+    path: ${paths.shapenet_preprocessed_dir}
+    categories: 
+      - "airplane"
+    mode: "test"
+    num_samples: 4
+
+trainer:
+  max_epochs: 900
+  log_every_n_iter: -1
+  log_image_every_n_iters: -1 # How often to log images within iterations. Disabled by default (-1).
+  check_val_every_n_epoch: 1
+  save_checkpoint_every_n_epoch: -1
+  
+# choose metric which will be optimized by Optuna
+# make sure this is the correct name of some metric logged!
+optimized_metric: "val_loss"
+
+# Number of GPUs involved in the hyperparameter search
+num_parallel_process: 1
+
+# here we define Optuna hyperparameter search
+# it optimizes for value returned from function with @hydra.main decorator
+# docs: https://hydra.cc/docs/next/plugins/optuna_sweeper
+hydra:
+  mode: "MULTIRUN" # set hydra to multirun by default if this config is attached
+
+  sweeper:
+    _target_: hydra_plugins.hydra_optuna_sweeper.optuna_sweeper.OptunaSweeper
+
+    # storage URL to persist optimization results
+    # for example, you can use SQLite if you set 'sqlite:///example.db'
+    storage: null
+
+    # name of the study to persist optimization results
+    study_name: "sdfusion_vqvae"
+
+    # number of parallel workers (i.e. GPUs working in parallel)
+    n_jobs: ${num_parallel_process}
+
+    # 'minimize' or 'maximize' the objective
+    direction: minimize
+
+    # total number of runs that will be executed
+    n_trials: 20
+
+    # choose Optuna hyperparameter sampler
+    # you can choose bayesian sampler (tpe), random search (without optimization), grid sampler, and others
+    # docs: https://optuna.readthedocs.io/en/stable/reference/samplers.html
+    sampler:
+      _target_: optuna.samplers.TPESampler
+      seed: 12345
+      n_startup_trials: 10 # number of random sampling runs before optimization starts
+
+    # define hyperparameter search space
+    params:
+      model.optimizer._target_: choice(torch.optim.Adam, torch.optim.AdamW, torch.optim.Adadelta, torch.optim.Adagrad)
+      model.optimizer.lr: interval(0.0001, 0.1)
+      data.batch_size: choice(1, 2, 4, 8) # NOTE: Tuning the batch size with TestIterator does not make sense (no variance in batch)
+      model.net.config.dropout: interval(0.0, 0.5)

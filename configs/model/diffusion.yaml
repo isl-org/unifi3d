@@ -1,0 +1,16 @@
+_target_: unifi3d.trainers.diffusion_trainer.DiffusionTrainer
+
+scheduler:
+  _target_: torch.optim.lr_scheduler.LambdaLR
+  _partial_: true
+
+loss_fn: 
+  _target_: torch.nn.MSELoss
+
+optimizer:
+  _target_: torch.optim.AdamW
+  _partial_: true
+  lr: 0.0001
+  weight_decay: 0.01
+loss_requires_grad: False # This will calculate grad even during test and validation set, because dualoctree requires grad to calculate loss. Please set it to False normally.
+compile: false

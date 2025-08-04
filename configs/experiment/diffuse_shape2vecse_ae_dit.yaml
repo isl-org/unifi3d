@@ -1,0 +1,95 @@
+# @package _global_
+
+# to execute this experiment with single GPU run:
+# accelerate launch scripts/accelerate/acc_train.py experiment=diff_shape2vecset_ae_dit
+
+defaults:
+  - override /net_encode: shape2vecset_ae
+  - override /net_denoise: dit
+  - override /data: shape2vec
+  - override /model: diffusion
+  - override /diffusion_sampler: ddpm
+  - override /trainer: default
+  - override /logger: aim
+
+# all parameters below will be merged with parameters from default configurations set above
+# this allows you to overwrite only specified parameters
+
+tags: ["train", "shape2vecset", "diffusion"]
+seed: 12345
+experiment_name: "diff_shape2vecset_ae_dit_chair"
+
+net_encode:
+  ckpt_path: ${paths.shared_ae_checkpoint_folder}/Chair/shape2vecset_ae_fixed/model.safetensors
+  norm_factor: 1.0
+  layer_norm_encoding: true
+  clamp_encoding: true
+
+# define main parameters here because they are used in multiple places
+learning_rate: 0.00005
+n_epochs: 8000
+
+net_denoise:
+  num_heads: 32
+  patch_embed:
+    _target_: unifi3d.models.modules.patch_embed.DummyTokenizer
+    n_tokens: 512
+    hidden_size: 512
+  in_channels: 1
+  hidden_size: 512
+  batchnorm: false
+
+diffusion_sampler:
+  beta_schedule: squaredcos_cap_v2
+  clip_sample: false
+  prediction_type: sample
+
+model:
+  encoder_decoder: ${net_encode}
+  diff_model: ${net_denoise}
+  sampling_scheduler: ${diffusion_sampler}
+  optimizer:
+    lr: ${learning_rate}
+  scheduler:
+    _target_: torch.optim.lr_scheduler.LambdaLR
+    lr_lambda:
+      _target_: unifi3d.utils.scheduler.lambda_lr_utils.get_lambda_warmup_decay
+      warmup_epochs: 20
+      min_lr: 0.000001 # 1e-6
+      max_lr: ${learning_rate}
+      max_epoch: ${n_epochs}
+    _partial_: true
+
+data:
+  batch_size: 8
+  dataset:
+    _target_: unifi3d.data.data_iterators.ShapenetPreprocessedIterator
+    path: ${paths.shapenet_preprocessed_dir}
+    categories:
+      - "chair"
+    mode: "train"
+  val_dataset:
+    _target_: unifi3d.data.data_iterators.ShapenetPreprocessedIterator
+    path: ${paths.shapenet_preprocessed_dir}
+    categories:
+      - "chair"
+    mode: "val"
+  test_dataset:
+    _target_: unifi3d.data.data_iterators.ShapenetPreprocessedIterator
+    path: ${paths.shapenet_preprocessed_dir}
+    categories:
+      - "chair"
+    mode: "test"
+
+trainer:
+  max_epochs: ${n_epochs}
+  log_every_n_iter: 100
+  log_image_every_n_iters: -1
+  check_val_every_n_epoch: -1
+  save_checkpoint_every_n_epoch: 10
+  batch_post_process: null
+
+paths:
+  log_dir: ${paths.root_dir}/logs/${experiment_name}
+
+test: false

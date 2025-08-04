@@ -1,0 +1,28 @@
+_target_: unifi3d.data.pointcloud_dataset.PointCloudDataModule
+dataset:
+    _target_: unifi3d.data.data_iterators.ShapenetPreprocessedIterator
+    path: data/shapenet_preprocessed
+    categories:
+      - airplane
+    mode: "train"
+    num_samples: 1
+test_dataset:
+    _target_: unifi3d.data.data_iterators.ShapenetPreprocessedIterator
+    path: data/shapenet_preprocessed
+    categories:
+      - airplane
+    mode: "test"
+    num_samples: 1
+val_dataset:
+    _target_: unifi3d.data.data_iterators.ShapenetPreprocessedIterator
+    path: data/shapenet_preprocessed
+    categories:
+      - airplane
+    mode: "val"
+    num_samples: 1
+config:
+    num_samples: 2048
+    num_occu_points: 4096
+    level: 0
+batch_size: 1
+num_workers: 0

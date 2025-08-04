@@ -1,0 +1,44 @@
+#@package _global_
+
+defaults:
+  - override /data: shape
+  - override /model: diffusion
+  - override /net_denoise: dit
+  - override /net_encode: shap_e_ae_ln
+  - override /diffusion_sampler: ddpm
+
+diffusion_sampler:
+  clip_sample: True
+
+net_denoise:
+  patch_embed: 
+    _target_: unifi3d.models.modules.patch_embed.DummyTokenizer
+    n_tokens: 1024
+    hidden_size: 1024
+    reshape_flat_input: True
+  in_channels: 1
+  hidden_size: 1024
+  num_heads: 16 # hidden_size needs to be divisible by num_heads.
+
+reference_dataset:
+  _target_: unifi3d.data.data_iterators.ShapenetIterator
+  path: ${paths.shapenet_dataset_dir}
+  categories: 
+    - "car"
+  mode: "test"
+
+categories: 
+  - "car"
+  
+net_encode:
+  ckpt_path: "/path/to/trained/ae/model.safetensors"
+
+model:
+  encoder_decoder: ${net_encode}
+  diff_model: ${net_denoise}
+  sampling_scheduler: ${diffusion_sampler}
+  
+ckpt: "/path/to/trained/diffusion/model.safetensors"
+
+shape: [1048576]
+output_path: "outputs/diffuse_dit_shap_e_ae/car"

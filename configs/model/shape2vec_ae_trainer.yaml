@@ -1,0 +1,23 @@
+_target_: unifi3d.trainers.encoder_decoder_trainer.EncoderDecoderTrainer
+
+optimizer:
+  _target_: torch.optim.AdamW
+  _partial_: true
+  lr: 0.00001 # 1e-4 * eff_batch_size / 256 -> ca 1e-5 for batch size~32
+  weight_decay: 0.01
+compile: false
+loss_requires_grad: false
+
+net: ${net_encode}
+
+scheduler:   
+  _target_: torch.optim.lr_scheduler.LambdaLR
+  lr_lambda:
+    _target_: unifi3d.utils.scheduler.lambda_lr_utils.get_lambda_warmup_decay
+    warmup_epochs: 0
+    min_lr: 0.000001 # 1e-6
+    max_lr: 0.0001 # 1e-4
+  _partial_: true
+
+loss:
+  _target_: unifi3d.losses.autoencoders.shape2vecset_loss.Shape2VecSetLoss

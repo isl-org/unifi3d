@@ -1,0 +1,63 @@
+_target_: unifi3d.trainers.diffusion_trainer.DiffusionTrainer
+# conditioning_key: null # set to crossattn or concat for conditioning
+
+encoder_decoder:
+  _target_: unifi3d.models.autoencoders.graph_vae.GraphVAE
+  depth: 6
+  channel_in: 4
+  nout: 4
+  full_depth: 2
+  depth_out: 6
+  resblk_type: basic
+  bottleneck: 4
+  code_channel: 8
+  add_kl_loss: False
+  kl_beta: 1
+  ckpt_path: null
+
+diff_model:
+  _target_: unifi3d.models.diffusion.unet_3d.UNet3DModel
+  dims: 3
+  image_size: 4 # 16
+  in_channels: ${encoder_decoder.code_channel} # 3
+  out_channels: ${encoder_decoder.code_channel} # 3
+  model_channels: 192
+  num_res_blocks: 2
+  attention_resolutions:  [1, 2, 4] #[ 1,2,4 ] # 16, 8, 4
+  # note: this isn\t actually the resolution but
+  # the downsampling factor, i.e. this corresnponds to
+  # attention on spatial resolution 8,16,32, as the
+  # spatial reolution of the latents is 64 for f4
+  channel_mult: [1] # [ 1,2,4,4 ] adding 2 seems to have skip unevenly between w,h,d
+  # num_head_channels: 32
+  num_heads: 6
+
+sampling_scheduler:
+  _target_: diffusers.DDPMScheduler
+  num_train_timesteps: 1000
+  beta_start: 0.0001
+  beta_end: 0.02
+  beta_schedule: "linear"
+  clip_sample: False
+  prediction_type: epsilon # can be epsilon, sample or v_prediction
+
+scheduler:
+  _target_: torch.optim.lr_scheduler.LambdaLR
+  lr_lambda:
+    _target_: unifi3d.utils.scheduler.lambda_lr_utils.get_lambda_lr_poly
+    max_epoch: 2
+    lr_power: 0.9
+  _partial_: true
+
+loss_fn: 
+  _target_: torch.nn.MSELoss
+
+optimizer:
+  _target_: torch.optim.AdamW
+  _partial_: true
+  lr: 0.0001
+  weight_decay: 0.01
+
+loss_requires_grad: False
+# compile model for faster training with pytorch 2.0
+compile: False

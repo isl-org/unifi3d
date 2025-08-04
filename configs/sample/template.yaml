@@ -1,0 +1,31 @@
+#@package _global_
+
+defaults:
+  - override /data: TODO
+  - override /model: diffusion
+  - override /net_denoise: dit
+  - override /net_encode: TODO
+  - override /diffusion_sampler: ddpm
+
+num_sampling_steps: 100 # Number of diffusion timesteps
+
+diffusion_sampler:
+  # optional: set sampling schedule and other parameters here
+  clip_sample: False
+
+net_denoise: # Use the same tokenizer and other DiT parameters as for training
+  patch_embed: TODO
+  in_channels: TODO
+  hidden_size: TODO
+  
+net_encode:
+  ckpt_path: TODO # use the same AE checkpoint as for training
+
+model:
+  encoder_decoder: ${net_encode}
+  diff_model: ${net_denoise}
+  sampling_scheduler: ${diffusion_sampler}
+  
+ckpt: ${paths.root_dir}/logs/diffuse/TODO # path to the trained model checkpoint
+
+shape: TODO # Shape of the latent to be denoised, e.g. for SDF+VQVAE it's [3, 16, 16, 16]

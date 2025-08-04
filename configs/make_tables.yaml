@@ -1,0 +1,13 @@
+#@package _global_
+
+# to execute this experiment run:
+# python scripts/evaluate/make_generation_table.py make_tables=dualoctree_diffusions.yaml
+# python scripts/evaluate/make_reconstruction_table.py make_tables=dualoctree_autoencoders.yaml
+
+defaults:
+  - _self_
+  - make_tables: null
+
+task_name: "make_tables"
+
+tags: ["make_tables"]

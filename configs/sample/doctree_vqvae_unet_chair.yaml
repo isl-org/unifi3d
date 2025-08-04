@@ -1,0 +1,69 @@
+#@package _global_
+
+defaults:
+  - override /data: dualoctree_shape
+  - override /model: diffusion
+  - override /net_denoise: unet
+  - override /net_encode: doctree_vqvae
+  - override /diffusion_sampler: ddpm
+
+batch_size_generation: 1
+num_sampling_steps: 100
+num_samples: 400
+
+# all samples
+encoder_ckpt_num: 2400
+unet_ckpt_id: "02400"
+batch_size: 420
+octree_depth: 6
+full_depth: 2
+categories: 
+  - "chair"
+shape: [8, 4, 4, 4] # per item
+
+diffusion_sampler:
+  beta_schedule: squaredcos_cap_v2
+  clip_sample: False
+
+data:
+  train_batch_size: 1
+  test_batch_size: 1
+  val_batch_size: 1
+  data_train:
+    dataset:
+      num_samples: 1
+  data_test:
+    dataset:
+      num_samples: -1
+  data_val:
+    dataset:
+      num_samples: 1
+
+net_encode:
+  ckpt_path: checkpoints/dualoctree_vqvae_chair.safetensors
+  code_channel: 8 # Update this number based on the ckpt it uses.
+
+net_denoise:
+  dims: 3
+  image_size: 4 # 16
+  in_channels: ${net_encode.code_channel} # 3
+  out_channels: ${net_encode.code_channel} # 3
+  model_channels: 192
+  num_res_blocks: 2
+  attention_resolutions:  [1, 2, 4] #[ 1,2,4 ] # 16, 8, 4
+  # note: this isn\t actually the resolution but
+  # the downsampling factor, i.e. this corresnponds to
+  # attention on spatial resolution 8,16,32, as the
+  # spatial reolution of the latents is 64 for f4
+  channel_mult: [1] # [ 1,2,4,4 ] adding 2 seems to have skip unevenly between w,h,d
+  # num_head_channels: 32
+  num_heads: 6
+
+
+model:
+  encoder_decoder: ${net_encode}
+  diff_model: ${net_denoise}
+  sampling_scheduler: ${diffusion_sampler}
+
+ckpt: checkpoints/dualoctree_unet_vqvae_chair.safetensors
+output_path: ${paths.root_dir}/logs/dualoctree_vqvae_unet_chair_eval

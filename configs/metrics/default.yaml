@@ -1,0 +1,38 @@
+- name: "fscore"
+  requires_gt: true
+  constructor:
+    _target_: unifi3d.utils.evaluate.metrics.fscore.FScore
+    threshold: 0.05
+    num_points: 10000
+- name: "fscore_025"
+  requires_gt: true
+  constructor:
+    _target_: unifi3d.utils.evaluate.metrics.fscore.FScore
+    threshold: 0.025
+    num_points: 10000
+- name: "fscore_0125"
+  requires_gt: true
+  constructor:
+    _target_: unifi3d.utils.evaluate.metrics.fscore.FScore
+    threshold: 0.0125
+    num_points: 10000
+- name: "chamfer_distance"
+  requires_gt: true
+  constructor:
+    _target_: unifi3d.utils.evaluate.metrics.chamfer_distance.ChamferDistance
+    num_points: 1000
+- name: "normal_consistency"
+  requires_gt: true
+  constructor:
+    _target_: unifi3d.utils.evaluate.metrics.normal_consistency.NormalConsistency
+    num_points: 1000
+- name: "mesh_volume_iou"
+  requires_gt: true
+  constructor:
+    _target_: unifi3d.utils.evaluate.metrics.mesh_volume_iou.MeshVolumeIOU
+    resolution: 128
+    margin: 0.05
+- name: "vertex_defects"
+  requires_gt: false
+  constructor:
+    _target_: unifi3d.utils.evaluate.metrics.vertex_defects.VertexDefects

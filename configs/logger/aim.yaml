@@ -1,0 +1,15 @@
+# https://aimstack.io/
+
+aim:
+  _target_: unifi3d.utils.logger.Logger
+  config:
+    logint: "aim"
+    name: ${experiment_name} # any string, set to "default" if not specified
+    root_dir: "${paths.output_dir}"
+    loggers: ["metric", "image", "hparams"] # "metric", "hparams", "hist", "image", "video", "mesh"
+    gpu_summarize": true # Show used / total GPU memory.
+    print_every_n_seconds: 1.0 # A Log message is being printed every print_every_n_seconds seconds
+    repo: ${paths.root_dir} # .aim folder will be created here
+    tracked_variables: # The keys should match aim/loggers
+      metric: ["loss", "lr"]
+      image: ["render_rec", "render_gt"]

@@ -1,0 +1,16 @@
+- name: "clip_sim_image"
+  requires_render: true
+  cond_type: image
+  constructor:
+    _target_: unifi3d.utils.evaluate.metrics.clip_sim_image.CLIPSimilarityImage
+# psnr amd lpips require that the rendered images and prompt have the same size
+- name: "psnr"
+  requires_render: true
+  cond_type: image
+  constructor:
+    _target_: unifi3d.utils.evaluate.metrics.psnr.PSNR
+- name: "lpips"
+  requires_render: true
+  cond_type: image
+  constructor:
+    _target_: unifi3d.utils.evaluate.metrics.lpips.LPIPS

@@ -1,0 +1,11 @@
+_target_: unifi3d.models.autoencoders.mesh_face_encoder.MeshEncoderDecoder
+
+dim_codebook: 192
+num_quantizers: 2
+codebook_size: 16384
+dim_area_embed: 16
+dim_coor_embed: 16
+dim_normal_embed: 16
+dim_angle_embed: 8
+attn_decoder_depth: 4
+attn_encoder_depth: 2

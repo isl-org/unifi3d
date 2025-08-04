@@ -1,0 +1,74 @@
+# path to root directory
+# this requires PROJECT_ROOT environment variable to exist
+# you can replace it with "." if you want the root to be the current working directory
+root_dir: ${oc.env:PROJECT_ROOT}
+
+# path to data directory
+data_dir: ${paths.root_dir}/data/
+
+# path to logging directory
+log_dir: ${paths.root_dir}/logs/${experiment_name}
+
+# path to output directory, created dynamically by hydra
+# path generation pattern is specified in `configs/hydra/default.yaml`
+# use it to store all files generated during the run, like ckpts and metrics
+output_dir: ${hydra:runtime.output_dir}
+
+# path to working directory
+work_dir: ${hydra:runtime.cwd}
+
+# datasets
+shapenet_dataset_dir: data/ShapeNetCore.v1
+complex_data_dir: data/complex_objects/
+shapenet_preprocessed_dir: data/shapenet_preprocessed/
+objaverse_preprocessed_dir: data/objaverse_preprocessed/
+
+# Shared checkpoint folders
+shared_ae_checkpoint_folder: checkpoints/final_checkpoints_AE
+shared_diff_checkpoint_folder: checkpoints/final_checkpoints_Diffusion
+
+# Shared output folders
+shared_ae_output_folder: logs/final_results_AE
+shared_diff_output_folder: logs/final_results_Diffusion
+
+# AE checkpoints
+voxel_vqvae_airplane_ckpt: ${paths.shared_ae_checkpoint_folder}/Airplane/voxel_vqvae/model.safetensors
+voxel_vqvae_car_ckpt: ${paths.shared_ae_checkpoint_folder}/Car/voxel_vqvae/model.safetensors
+voxel_vqvae_chair_ckpt: ${paths.shared_ae_checkpoint_folder}/Chair/voxel_vqvae/model.safetensors
+voxel_vqvae_all3_ckpt: ${paths.shared_ae_checkpoint_folder}/Airplane_Car_Chair/voxel_vqvae/model.safetensors
+
+sdf_vqvae_airplane_ckpt: ${paths.shared_ae_checkpoint_folder}/Airplane/sdf_vqvae/model.safetensors
+sdf_vqvae_car_ckpt: ${paths.shared_ae_checkpoint_folder}/Car/sdf_vqvae/model.safetensors
+sdf_vqvae_chair_ckpt: ${paths.shared_ae_checkpoint_folder}/Chair/sdf_vqvae/model.safetensors
+sdf_vqvae_all3_ckpt: ${paths.shared_ae_checkpoint_folder}/Airplane_Car_Chair/sdf_vqvae/model.safetensors
+
+shape2vecset_ae_airplane_ckpt: ${paths.shared_ae_checkpoint_folder}/Airplane/shape2vecset_ae/model.safetensors
+shape2vecset_ae_car_ckpt: ${paths.shared_ae_checkpoint_folder}/Car/shape2vecset_ae/model.safetensors
+shape2vecset_ae_chair_ckpt: ${paths.shared_ae_checkpoint_folder}/Chair/shape2vecset_ae/model.safetensors
+shape2vecset_ae_all3_ckpt: ${paths.shared_ae_checkpoint_folder}/Airplane_Car_Chair/shape2vecset_ae/model.safetensors
+
+# Diffusion checkpoints
+voxel_unet_vqvae_airplane_ckpt: ${paths.shared_diff_checkpoint_folder}/Airplane/voxel_vqvae_unet/model.safetensors
+voxel_unet_vqvae_car_ckpt: ${paths.shared_diff_checkpoint_folder}/Car/voxel_vqvae_unet/model.safetensors
+voxel_unet_vqvae_chair_ckpt: ${paths.shared_diff_checkpoint_folder}/Chair/voxel_vqvae_unet/model.safetensors
+voxel_unet_vqvae_all3_ckpt: ${paths.shared_diff_checkpoint_folder}/Airplane_Car_Chair/voxel_vqvae_unet/model.safetensors
+
+voxel_dit_vqvae_airplane_ckpt: ${paths.shared_diff_checkpoint_folder}/Airplane/voxel_vqvae_dit/model.safetensors
+voxel_dit_vqvae_car_ckpt: ${paths.shared_diff_checkpoint_folder}/Car/voxel_vqvae_dit/model.safetensors
+voxel_dit_vqvae_chair_ckpt: ${paths.shared_diff_checkpoint_folder}/Chair/voxel_vqvae_dit/model.safetensors
+voxel_dit_vqvae_all3_ckpt: ${paths.shared_diff_checkpoint_folder}/Airplane_Car_Chair/voxel_vqvae_dit/model.safetensors
+
+sdf_unet_vqvae_airplane_ckpt: ${paths.shared_diff_checkpoint_folder}/Airplane/sdf_vqvae_unet/model.safetensors
+sdf_unet_vqvae_car_ckpt: ${paths.shared_diff_checkpoint_folder}/Car/sdf_vqvae_unet/model.safetensors
+sdf_unet_vqvae_chair_ckpt: ${paths.shared_diff_checkpoint_folder}/Chair/sdf_vqvae_unet/model.safetensors
+sdf_unet_vqvae_all3_ckpt: ${paths.shared_diff_checkpoint_folder}/Airplane_Car_Chair/sdf_vqvae_unet/model.safetensors
+
+sdf_dit_vqvae_airplane_ckpt: ${paths.shared_diff_checkpoint_folder}/Airplane/sdf_vqvae_dit/model.safetensors
+sdf_dit_vqvae_car_ckpt: ${paths.shared_diff_checkpoint_folder}/Car/sdf_vqvae_dit/model.safetensors
+sdf_dit_vqvae_chair_ckpt: ${paths.shared_diff_checkpoint_folder}/Chair/sdf_vqvae_dit/model.safetensors
+sdf_dit_vqvae_all3_ckpt: ${paths.shared_diff_checkpoint_folder}/Airplane_Car_Chair/sdf_vqvae_dit/model.safetensors
+
+shape2vecset_dit_ae_airplane_ckpt: ${paths.shared_diff_checkpoint_folder}/Airplane/shape2vecset_ae_dit/model.safetensors
+shape2vecset_dit_ae_car_ckpt: ${paths.shared_diff_checkpoint_folder}/Car/shape2vecset_ae_dit/model.safetensors
+shape2vecset_dit_ae_chair_ckpt: ${paths.shared_diff_checkpoint_folder}/Chair/shape2vecset_ae_dit/model.safetensors
+shape2vecset_dit_ae_all3_ckpt: ${paths.shared_diff_checkpoint_folder}/Airplane_Car_Chair/shape2vecset_ae_dit/model.safetensors

@@ -1,0 +1,11 @@
+_target_: unifi3d.models.autoencoders.graph_vae.GraphVAE
+depth: 6
+channel_in: 4
+nout: 4
+full_depth: 2
+depth_out: 6
+resblk_type: basic
+bottleneck: 4
+code_channel: 8
+add_kl_loss: False
+kl_beta: 1

@@ -1,0 +1,97 @@
+# @package _global_
+
+# to execute this experiment run:
+# python accelerate/acc_eval.py eval=acc_dualoctree_ae_shapenet.yaml
+
+defaults:
+  - override /data: dualoctree
+  - override /model: graph_ae
+  - override /trainer: default
+  - override /logger: aim     # default is null.
+
+
+# all parameters below will be merged with parameters from default configurations set above
+# this allows you to overwrite only specified parameters
+
+task_name: "eval"
+
+ckpt_path: 
+train: false
+
+tags: ["eval", "shapenet", "dualoctree", "graph_ae"]
+
+seed: 12345
+
+trainer:
+  batch_post_process: 
+    _target_: unifi3d.utils.data.doctree_utils.doctree_post_process
+    config:
+      size: 160
+      mesh_scale: 0.6
+      sdf_scale: 0.9
+      output_dir: ${paths.output_dir}/outputs
+      save_sdf: False
+    _partial_: True
+
+model:
+  _target_: unifi3d.trainers.encoder_decoder_trainer.EncoderDecoderTrainer
+  compile: false
+  net:
+    _target_: unifi3d.models.autoencoders.graph_ae.GraphAE
+    depth: 6
+    channel_in: 4
+    nout: 4
+    full_depth: 2
+    depth_out: 6
+    resblk_type: basic
+    bottleneck: 4
+    code_channel: 8
+
+data:
+  test_batch_size: 1
+
+  test_collate_fn:
+    _target_: unifi3d.data.dualoctree_dataset.collate_func
+    _partial_: true
+
+  data_test:
+    _target_: unifi3d.data.dualoctree_dataset.DualOctreeDataset
+    mode: "test"
+    dataset:
+      _target_: unifi3d.data.data_iterators.ShapenetPreprocessedIterator
+      path: ${paths.shapenet_preprocessed_dir}
+      mode: ${data.data_test.mode}
+      num_samples: -1              # For faster testing, you can restrict the reading to a small number. Set it to -1 if you do not intend to use it.
+    config:
+      transform_config:
+        depth: 6
+        full_depth: 2
+        node_dis: True
+        split_label: True
+        load_sdf: False
+        load_occu: False
+        sample_surf_points: False
+        adaptive: False # default is False. Build the adaptive octree
+        node_feature: False # default is False. Calculate the node feature
+        distort: False
+      create_mesh_config:
+        size: 160
+        mesh_scale: 0.6
+        sdf_scale: 0.9
+        resolution: 160             # used in eval. TODO: check if it is used.
+
+    read_file:
+      _target_: unifi3d.data.dualoctree_dataset.ReadFile
+      load_sdf: ${data.data_test.config.transform_config.load_sdf}
+      load_occu: ${data.data_test.config.transform_config.load_occu}
+      file_number: -1
+
+    transform:
+      _target_: unifi3d.data.dualoctree_dataset.TransformShape
+      config: ${data.data_test.config.transform_config}
+
+
+paths:
+  log_dir: ${paths.root_dir}/logs/hq3dm/acc_graph_ae/shapenet/eval
+  output_path: ${paths.root_dir}/logs/hq3dm/acc_graph_ae/shapenet/eval
+test: True

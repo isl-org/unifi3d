@@ -1,0 +1,91 @@
+# @package _global_
+
+
+# to execute this experiment with single GPU run:
+# accelerate launch scripts/accelerate/acc_train.py experiment=diff_voxel_ae_unet
+
+defaults:
+  - override /data: voxel
+  - override /model: diffusion
+  - override /net_encode: vae_3d
+  - override /net_denoise: unet
+  - override /diffusion_sampler: ddpm
+  - override /trainer: default
+  - override /logger: aim     # default is null.
+
+# all parameters below will be merged with parameters from default configurations set above
+# this allows you to overwrite only specified parameters
+
+tags: ["train", "voxel", "diffusion"]
+seed: 12345
+experiment_name: "diff_voxel_ae_unet_chair"
+
+# # resume training from checkpoint
+# ckpt_path: path/to/ckpt
+# resume_training: True
+
+net_encode:
+  ckpt_path: ${paths.shared_ae_checkpoint_folder}/Chair/voxel_ae/model.safetensors
+  is_vae: false
+
+diffusion_sampler:
+  beta_schedule: squaredcos_cap_v2
+  clip_sample: false
+
+model:
+  encoder_decoder: ${net_encode}
+  diff_model: ${net_denoise}
+  sampling_scheduler: ${diffusion_sampler}
+  optimizer:
+    lr: 0.00001
+  scheduler:
+    _target_: torch.optim.lr_scheduler.StepLR
+    # lr_lambda: null
+    step_size: 100
+    gamma: 0.9
+
+logger: 
+  aim: # Should be the same as /logger
+    config: 
+      loggers: ["metric", "image", "mesh", "hparams"] # List and type of logging implementations 
+      tracked_variables: # The keys should match aim/loggers
+        metric: ["loss", "lr"]
+        image: ["render_gt", "render_rec_gt", "render_rec"]
+        mesh: ["mesh_gt", "mesh_rec_gt", "mesh_rec"]
+
+data:
+  batch_size: 4
+  dataset:
+    _target_: unifi3d.data.data_iterators.ShapenetPreprocessedIterator
+    path: ${paths.shapenet_preprocessed_dir}
+    categories: 
+      - "chair"
+    mode: "train"
+  val_dataset:
+    _target_: unifi3d.data.data_iterators.ShapenetPreprocessedIterator
+    path: ${paths.shapenet_preprocessed_dir}
+    categories: 
+      - "chair"
+    mode: "val"
+  test_dataset:
+    _target_: unifi3d.data.data_iterators.ShapenetPreprocessedIterator
+    path: ${paths.shapenet_preprocessed_dir}
+    categories: 
+      - "chair"
+    mode: "test"
+
+trainer:
+  max_epochs: 8000
+  log_every_n_iter: 1
+  log_image_every_n_iters: 100 # How often to log images within iterations. Disabled by default (-1).
+  check_val_every_n_epoch: 10
+  save_checkpoint_every_n_epoch: 5
+  batch_post_process: null
+
+mixed_precision: "no"
+detect_anomaly: true
+
+paths:
+  log_dir: ${paths.root_dir}/logs/${experiment_name}
+
+test: false

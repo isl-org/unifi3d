@@ -1,0 +1,87 @@
+#@package _global_
+
+defaults:
+  - override /data: dualoctree_shape # this is used by default
+  - override /model: diffusion 
+  - override /net_denoise: unet # this is just a placeholder, but actually set by `diff_id`
+  - override /net_encode: doctree_vae # this is just a placeholder, but actually set by `ae_id`
+  - override /diffusion_sampler: ddpm
+  - override /metrics: cond_gen_text # or cond_gen_text for text conditioning
+
+batch_size_generation: 1
+num_sampling_steps: 100
+num_samples: 100
+num_views_render: 10
+cond_mode: "text"
+# all samples
+encoder_ckpt_num: 2400
+unet_ckpt_id: "02400"
+batch_size: 1000
+octree_depth: 6
+full_depth: 2
+categories: 
+  - "airplane"
+  - "car"
+  - "chair"
+shape: [8, 4, 4, 4] # per item
+
+diffusion_sampler:
+  beta_schedule: squaredcos_cap_v2
+  clip_sample: False
+
+data:
+  train_batch_size: 1
+  test_batch_size: 1
+  val_batch_size: 1
+  data_train:
+    dataset:
+      num_samples: 1
+  data_test:
+    dataset:
+      num_samples: -1
+  data_val:
+    dataset:
+      num_samples: 1
+
+net_encode:
+  ckpt_path: checkpoints/dualoctree_vae_car_airplane_chair.safetensors
+  code_channel: 8 # Update this number based on the ckpt it uses.
+  add_kl_loss: False
+
+net_denoise:
+  dims: 3
+  image_size: 4 # 16
+  in_channels: ${net_encode.code_channel} # 3
+  out_channels: ${net_encode.code_channel} # 3
+  model_channels: 192
+  num_res_blocks: 2
+  attention_resolutions:  [1, 2, 4] #[ 1,2,4 ] # 16, 8, 4
+  # note: this isn\t actually the resolution but
+  # the downsampling factor, i.e. this corresponds to
+  # attention on spatial resolution 8,16,32, as the
+  # spatial reolution of the latents is 64 for f4
+  channel_mult: [1] # [ 1,2,4,4 ] adding 2 seems to have skip unevenly between w,h,d
+  # num_head_channels: 32
+  num_heads: 6
+  # conditional modes
+  text: crossattn
+  use_spatial_transformer: true
+  context_dim: 512 # can be anything
+
+model:
+  encoder_decoder: ${net_encode}
+  diff_model: ${net_denoise}
+  sampling_scheduler: ${diffusion_sampler}
+
+# context for cond generation
+context:
+  - text:
+    - "car"
+  # NOTE: For inference, the image context must be specific images! (not a folder)
+  # - image: 
+  #   - data/shapenet2/renderings/03001627/bec78ebd204764f637a0eda928b574d2/014.png
+  #   - data/shapenet2/renderings/03001627/7ed9395ec6fa732248db5ebe0dbfb1d5/014.png
+  #   - data/shapenet2/renderings/03001627/7f271ecbdeb7610d637adadafee6f182/014.png
+  
+ckpt: checkpoints/dualoctree_unet_vae_car_airplane_chair_text.safetensors
+output_path: logs/final_results_conditional/text_conditional_vae_unet_car_airplane_chair_eval

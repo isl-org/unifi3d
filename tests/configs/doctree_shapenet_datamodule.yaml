@@ -1,0 +1,97 @@
+_target_: unifi3d.data.dualoctree_dataset.DualOctreeDataModule
+
+num_workers: 0                  # Leave it as 0 for now. Setting it to a specific number, e.g.7, may cause dataloader exit unexpected error if it exceeds the limit.
+train_batch_size: 1
+val_batch_size: 1         
+test_batch_size: 1
+train_collate_fn:
+  _target_: unifi3d.data.dualoctree_dataset.collate_func
+  _partial_: true
+test_collate_fn: ${train_collate_fn}
+data_train:
+  _target_: unifi3d.data.dualoctree_dataset.DualOctreeDataset
+  mode: "train"
+  dataset:
+    _target_: unifi3d.data.data_iterators.ShapenetPreprocessedIterator
+    path: data/shapenet_preprocessed
+    mode: ${data_train.mode}
+    num_samples: 2              # For faster testing, you can restrict the reading to a small number. Set it to -1 if you do not intend to use it.
+    categories: 
+      - airplane
+
+  config:
+    transform_config:
+      depth: 6                    # The octree depth starting from 0, synthetic room has depth up to 7.
+      full_depth: 2               # The full depth, from 6 up to level 2
+      node_dis: True              # True and there are normals, the octree features is 4 channels, i.e., the average normals and the 1 channel displacement. If node_dis is True, there are no normals, the feature is also 4 channels, i.e., a 3 channel (displacement of average points relative to the center points, and the last channel is constant)
+      split_label: True           # Save the split label
+      load_sdf: True
+      load_occu: False            # Defaults to False.
+      sample_surf_points: False   # Defaults to False.
+      adaptive: False             # Build the adaptive octree
+      node_feature: False         # Calculate the node feature
+      distort: False              # No data augmentation
+    create_mesh_config:
+      size: 160
+      mesh_scale: 0.6
+      sdf_scale: 0.9
+      resolution: 160             # used in eval. TODO: check if it is used.
+
+  read_file:
+    _target_: unifi3d.data.dualoctree_dataset.ReadFile
+    load_sdf: ${data_train.config.transform_config.load_sdf}
+    load_occu: ${data_train.config.transform_config.load_occu}
+    file_number: -1
+
+  transform:
+    _target_: unifi3d.data.dualoctree_dataset.TransformShape
+    config: ${data_train.config.transform_config}
+
+data_test:
+  _target_: ${data_train._target_}
+  mode: "test"
+  dataset:
+    _target_: ${data_train.dataset._target_}
+    path: ${data_train.dataset.path}
+    mode: ${data_test.mode}
+    num_samples: 2              # For faster testing, you can restrict the reading to a small number. Set it to -1 if you do not intend to use it.
+    categories: ${data_train.dataset.categories}
+
+  config:
+    transform_config:
+      depth: 6
+      full_depth: 2
+      node_dis: True
+      split_label: True
+      load_sdf: False
+      load_occu: False
+      sample_surf_points: False
+      adaptive: False # default is False. Build the adaptive octree
+      node_feature: False # default is False. Calculate the node feature
+      distort: False
+    create_mesh_config: ${data_train.config.create_mesh_config}
+
+  read_file: ${data_train.read_file}
+
+  transform:
+    _target_: ${data_train.transform._target_}
+    config: ${data_test.config.transform_config}
+
+data_val:
+  _target_: ${data_train._target_}
+  mode: "val"
+  dataset:
+    _target_: ${data_train.dataset._target_}
+    path: ${data_train.dataset.path}
+    mode: ${data_val.mode}
+    num_samples: 2              # For faster testing, you can restrict the reading to a small number. Set it to -1 if you do not intend to use it.
+    categories: ${data_train.dataset.categories}
+
+  config: ${data_train.config}
+
+  read_file: ${data_train.read_file}
+
+  transform: ${data_test.transform}
+
+
+

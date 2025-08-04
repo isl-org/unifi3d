@@ -1,0 +1,29 @@
+#@package _global_
+
+defaults:
+  - override /data: shape2vec # this is used by default
+  - override /model: diffusion 
+  - override /net_denoise: dit # this is just a placeholder, but actually set by `diff_id`
+  - override /net_encode: shape2vecset_ae # this is just a placeholder, but actually set by `ae_id`
+  - override /diffusion_sampler: ddpm
+
+overwrite_model_cfg: true
+
+num_sampling_steps: 100
+
+ae_id: shape2vecset_ae
+diff_id: dit # _unet or _dit
+cat_id: "Chair"
+
+net_encode:
+  ckpt_path: ${paths.shared_ae_checkpoint_folder}/${cat_id}/${ae_id}_norm/model.safetensors
+
+model:
+  encoder_decoder: ${net_encode}
+  diff_model: ${net_denoise}
+  sampling_scheduler: ${diffusion_sampler}
+  
+ckpt: ${paths.shared_diff_checkpoint_folder}/${cat_id}/${ae_id}_norm_${diff_id}/model.safetensors
+
+shape: [512, 512]
+output_path: ${paths.shared_diff_output_folder}/${cat_id}/${ae_id}_${diff_id}

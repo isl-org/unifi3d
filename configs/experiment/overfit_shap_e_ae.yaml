@@ -1,0 +1,47 @@
+# @package _global_
+
+defaults:
+  - override /data: shape
+  - override /model: shap_e_ae
+  - override /net_encode: shap_e_ae
+  - override /trainer: default
+  - override /logger: aim     # default is null.
+
+
+# all parameters below will be merged with parameters from default configurations set above
+# this allows you to overwrite only specified parameters
+
+tags: ["train", "nerf", "shap_e_ae"]
+seed: 12345
+experiment_name: "acc_nerf_shap_e_ae"
+
+data:
+  dataset:
+    _target_: unifi3d.data.data_iterators.TestIterator
+    path: "knot"
+    mode: "train"
+  test_dataset:
+    _target_: unifi3d.data.data_iterators.TestIterator
+    path: "knot"
+    mode: "test"
+  val_dataset:
+    _target_: unifi3d.data.data_iterators.TestIterator
+    path: "knot"
+    mode: "val"
+  batch_size: 1
+
+trainer:
+  max_epochs: 10
+  log_every_n_iter: 1
+  check_val_every_n_epoch: 10
+  batch_post_process: null
+
+model:
+  net: ${net_encode}
+  optimizer:
+    lr: 0.0001
+
+paths:
+  log_dir: ${paths.root_dir}/logs/shap_e_ae/test
+
+test: false

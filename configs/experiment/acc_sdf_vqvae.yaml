@@ -1,0 +1,84 @@
+# @package _global_
+
+# to execute this experiment with single GPU run:
+# accelerate launch scripts/accelerate/acc_train.py experiment=acc_sdf_vqvae
+
+defaults:
+  - override /data: sdf
+  - override /model: vqvae
+  - override /net_encode: vqvae
+  - override /trainer: default
+  - override /logger: aim     # default is null.
+
+
+# all parameters below will be merged with parameters from default configurations set above
+# this allows you to overwrite only specified parameters
+
+tags: ["train", "sdf", "vqvae"]
+seed: 12345
+experiment_name: "acc_sdf_vqvae_chair"
+
+# # resume training from checkpoint
+# ckpt_path: path/to/ckpt
+# resume_training: True
+
+logger: 
+  aim: # Should be the same as /logger
+    config: 
+      loggers: ["metric", "image", "mesh", "hparams"] # List and type of logging implementations 
+      tracked_variables: # The keys should match aim/loggers
+        metric: ["loss", "lr"]
+        image: ["render_gt", "render_rec_gt", "render_rec"]
+        mesh: ["mesh_gt", "mesh_rec_gt", "mesh_rec"]
+
+model:
+  net: ${net_encode}
+  optimizer:
+    lr: 0.0001
+  scheduler:
+    _target_: torch.optim.lr_scheduler.StepLR
+    # lr_lambda: null
+    step_size: 100
+    gamma: 0.9
+
+optimizer:
+  _target_: torch.optim.AdamW
+  _partial_: true
+  lr: 0.001
+  weight_decay: 0.0
+
+data:
+  batch_size: 8
+  dataset:
+    _target_: unifi3d.data.data_iterators.ShapenetPreprocessedIterator
+    path: ${paths.shapenet_preprocessed_dir}
+    categories: 
+      - "chair"
+    mode: "train"
+  val_dataset:
+    _target_: unifi3d.data.data_iterators.ShapenetPreprocessedIterator
+    path: ${paths.shapenet_preprocessed_dir}
+    categories: 
+      - "chair"
+    mode: "val"
+  test_dataset:
+    _target_: unifi3d.data.data_iterators.ShapenetPreprocessedIterator
+    path: ${paths.shapenet_preprocessed_dir}
+    categories: 
+      - "chair"
+    mode: "test"
+
+trainer:
+  max_epochs: 8000
+  log_every_n_iter: 1
+  log_image_every_n_iters: 100 # How often to log images within iterations. Disabled by default (-1).
+  check_val_every_n_epoch: 10
+  save_checkpoint_every_n_epoch: 10
+  batch_post_process: null
+
+mixed_precision: "no"
+
+paths:
+  log_dir: ${paths.root_dir}/logs/${experiment_name}
+
+test: false

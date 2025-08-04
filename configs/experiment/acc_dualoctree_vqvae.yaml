@@ -1,0 +1,73 @@
+# @package _global_
+
+# to execute this experiment with single GPU run:
+# accelerate launch scripts/accelerate/acc_train.py experiment=acc_dualoctree_vqvae
+
+defaults:
+  - override /data: dualoctree_shape
+  - override /model: graph_doctree
+  - override /net_encode: doctree_vqvae
+  - override /trainer: default
+  - override /logger:
+    - aim
+    # - wandb
+
+# all parameters below will be merged with parameters from default configurations set above
+# this allows you to overwrite only specified parameters
+
+tags: ["train", "shapenet", "dualoctree", "graph_vqvae"]
+resume_training: False
+seed: 12345
+mixed_precision: "no"
+octree_depth: 6
+full_depth: 2
+experiment_name: dualoctree_vqvae_chair
+categories: 
+  - "chair"         # Test for one category. Leaving it empty for all categories
+
+data:
+  train_batch_size: 50 # 180 with bf16, 
+  val_batch_size: 1
+  data_test:
+    dataset:
+      num_samples: 1 # make the loading faster.
+  data_val:
+    dataset:
+      num_samples: 1
+
+net_encode:
+  code_channel: 8
+
+trainer:
+  max_epochs: 2400          # 300 in dualoctree
+  min_epochs: 2400          # 300 for bf16 precision.
+  log_every_n_iter: 2     # chair has 3287 files, for batch size 180 on 4 gpus, there will be roughly 5 iteration per epoch.
+  check_val_every_n_epoch: -1
+  save_checkpoint_every_n_epoch: 50
+  ckpt_num: 3 # Keep the last 3 checkpoints.
+
+model:
+  optimizer:
+    lr: 0.029             # 0.001 in dualoctree, linear scaling rule 0.045 = 0.001 * 180* 4 / 16
+    weight_decay: 0.01    # defaults to 0.0005 0.01 in dualoctree, theoretically 0.0002 = 0.01 * 16 / 180/ 4
+    # step_size: (160,240)  # defaults to (120,60,) not used in poly
+  loss_requires_grad: True # This will calculate grad even during test and validation set, because dualoctree requires grad to calculate loss. Please set it to False normally.
+  compile: false
+  loss:
+    _target_: unifi3d.losses.autoencoders.dualoctree_losses.shapenet_loss
+    reg_loss_type: sdf_reg_loss
+    _partial_: true
+
+paths:
+  log_dir: ${paths.root_dir}/logs/${experiment_name}
+  output_dir: ${paths.log_dir}
+
+test: False
+
+logger:
+  aim:
+    config:
+      loggers: ["metric", "image", "hparams"] # metric, image, mesh, trimesh, video, hist, hparams
+      tracked_variables:
+        metric: ["loss", "lr", "loss_quantize", "weight_quantize"]
+        image: ["render_gt", "render_rec_gt", "render_rec"]

@@ -1,0 +1,10 @@
+- name: "clip_sim_text"
+  requires_render: true
+  cond_type: text
+  constructor:
+    _target_: unifi3d.utils.evaluate.metrics.clip_sim_text.CLIPSimilarityText
+- name: "render_fid"
+  requires_render: true
+  cond_type: text
+  constructor:
+    _target_: unifi3d.utils.evaluate.metrics.render_fid.RenderFID

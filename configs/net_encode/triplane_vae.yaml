@@ -1,0 +1,35 @@
+_target_: unifi3d.models.autoencoders.triplane_vae.TriplaneVAE
+
+density_grid_points: 64
+config:
+  model:
+    c_dim: 8
+    encoder: pointnet_local_pool
+    encoder_kwargs:
+      hidden_dim: 256
+      plane_type: ['xz', 'xy', 'yz']
+      plane_resolution: 16
+      use_layer_norm: True
+      unet: True
+      unet_kwargs:
+        depth: 4
+        merge_mode: concat
+        start_filts: 64
+    decoder: simple_local
+    decoder_kwargs:
+      sample_mode: bilinear # bilinear / nearest
+      hidden_size: 256
+    padding: 0.1
+    dim: 3
+    triplane_feature_mode: image
+  generation:
+    resolution_0: 64
+    upsampling_steps: 2
+    use_sampling: false
+    refinement_step: 0
+    simplify_nfaces: null
+  test:
+    threshold: 0.2
+  data:
+    input_type: pointcloud
+    padding: 0.1

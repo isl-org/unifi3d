@@ -1,0 +1,20 @@
+_target_: unifi3d.trainers.encoder_decoder_trainer.EncoderDecoderTrainer
+
+optimizer:
+  _target_: torch.optim.AdamW
+  _partial_: true
+  lr: 0.001
+  weight_decay: 0.01
+loss_requires_grad: False # This will calculate grad even during test and validation set, because dualoctree requires grad to calculate loss. Please set it to False normally.
+compile: false
+
+net: ${net_encode.shap_e_ae}
+
+scheduler:
+  _target_: torch.optim.lr_scheduler.LambdaLR
+  lr_lambda:
+    _target_: unifi3d.utils.scheduler.lambda_lr_utils.get_lambda_lr_fixed
+  _partial_: true
+
+loss:
+  _target_: unifi3d.losses.autoencoders.shap_e_loss.ShapELoss

@@ -1,0 +1,31 @@
+#@package _global_
+
+defaults:
+  - override /data: shape
+  - override /model: shap_e_ae
+  - override /net_encode: shap_e_vae
+  - override /trainer: default
+
+experiment_name: "benchmark_shap_e_vae"
+profiling: null
+
+ckpt_path: "/path/to/trained/vae/model.safetensors"
+
+data:
+  test_dataset:
+    _target_: unifi3d.data.data_iterators.ShapenetPreprocessedIterator
+    path: ${paths.shapenet_dataset_dir}
+    categories: 
+      - "chair"
+    mode: "test"
+  batch_size: 1
+
+model:
+  net: ${net_encode}
+
+output_path: "outputs/shap_e_vae/chair"
+representation: "nerf"
+label_path: null
+encode: true
+limit: 2000
+plot_mesh: true

@@ -1,0 +1,36 @@
+# @package _global_
+defaults:
+  - data: null
+  - model: null
+  - paths: default
+  - trainer: default
+  - net_denoise: null
+  - net_encode: null
+  - diffusion_sampler: ddpm
+  - metrics: generation
+  - sample: null
+  - eval: null
+  - logger: null
+
+task_name: "sample"
+tags: ["sample"]
+
+experiment_name: null
+profiling: null
+
+# Dataset for metric computation
+reference_dataset:
+  _target_: unifi3d.data.data_iterators.ShapenetPreprocessedIterator
+  path: ${paths.shapenet_preprocessed_dir}
+  categories:
+    - "chair"
+  mode: "test"
+
+# Benchmarking configuration
+num_samples: 10 # How many samples to generated
+# batch_size_generation: 1  # generate samples in batches -> how many at once. This field can't be over-written for some reason. We are commenting this out to force user to set this up in their config.
+num_points_metrics: 10000 # number of points sampled from the mesh for metrics computation
+save_mesh: true # whether to save meshes (in output_ath/generated_samples)
+plot_mesh: true # whether to create the row-plot where several samples are shown
+render_mesh: true # whether to render the generated samples
+output_path: ??? # output path (specified in configs/sample/xx.yaml files)

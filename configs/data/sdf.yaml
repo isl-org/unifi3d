@@ -1,0 +1,13 @@
+_target_: unifi3d.data.sdf_dataset.SDFDataModule
+dataset:
+    _target_: unifi3d.data.data_iterators.ShapenetPreprocessedIterator
+    path: ${paths.shapenet_preprocessed_dir}
+    mode: "test"
+config:
+    res: 64
+    sample_res: 64
+    thresh_clamp_sdf: 0.2
+    padding: 0.2
+    level: 0.005
+batch_size: 8                  # Total number of batch size per run. Needs to be divisible by the number of devices (e.g., if in a distributed setup)
+num_workers: 0                  # Leave it as 0 for now. Setting it to a specific number, e.g.7, may cause dataloader exit unexpected error if it exceeds the limit.

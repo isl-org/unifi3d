@@ -1,0 +1,8 @@
+- name: "vertex_defects"
+  requires_gt: false
+  constructor:
+    _target_: unifi3d.utils.evaluate.metrics.vertex_defects.VertexDefects
+- name: "mesh_curvature"
+  requires_gt: false
+  constructor:
+    _target_: unifi3d.utils.evaluate.metrics.mesh_mean_curvature.MeshMeanCurvature

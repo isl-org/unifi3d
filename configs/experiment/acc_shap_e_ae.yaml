@@ -1,0 +1,77 @@
+# @package _global_
+
+# to execute this experiment with single GPU run:
+# accelerate launch scripts/accelerate/acc_train.py experiment=acc_shap_e_ae.yaml
+
+# For multi-GPU training run:
+# accelerate launch scripts/acc_train.py trainer=ddp experiment=dualoctree_ae.yaml
+
+# For faster training debugging with fewer samples on a single GPU:
+# accelerate launch scripts/acc_train.py experiment=dualoctree_ae.yaml data.config.num_samples=10
+
+defaults:
+  - override /data: shape
+  - override /model: shap_e_ae
+  - override /net_encode: shap_e_ae
+  - override /trainer: default
+  - override /logger: aim     # default is null.
+
+# all parameters below will be merged with parameters from default configurations set above
+# this allows you to overwrite only specified parameters
+
+tags: ["train", "nerf", "shap_e_ae"]
+seed: 12345
+experiment_name: "acc_nerf_shap_e_ae"
+
+logger: 
+  aim: # Should be the same as /logger
+    config: 
+      loggers: ["metric", "image", "hparams"] # List and type of logging implementations 
+      tracked_variables: # The keys should match aim/loggers
+        metric: ["loss", "lr"]
+        image: ["render_gt", "render_rec"]
+
+model:
+  net: ${net_encode}
+  optimizer:
+    _target_: torch.optim.Adam
+    _partial_: true
+    lr: 1e-6
+    weight_decay: 0.0
+
+ckpt_path: ???
+
+data:
+  batch_size: 1
+  dataset:
+    _target_: unifi3d.data.data_iterators.ShapenetIterator
+    path: ${paths.shapenet_dataset_dir}
+    categories: 
+      - "chair"
+    mode: "train"
+  val_dataset:
+    _target_: unifi3d.data.data_iterators.ShapenetIterator
+    path: ${paths.shapenet_dataset_dir}
+    categories: 
+      - "chair"
+    mode: "val"
+  test_dataset:
+    _target_: unifi3d.data.data_iterators.ShapenetIterator
+    path: ${paths.shapenet_dataset_dir}
+    categories: 
+      - "chair"
+    mode: "test"
+
+trainer:
+  max_epochs: 100
+  log_every_n_iter: 20
+  log_image_every_n_iters: -1 # How often to log images within iterations. Disabled by default (-1).
+  check_val_every_n_epoch: -1
+  save_checkpoint_every_n_epoch: 10
+  batch_post_process: null
+  mixed_precision: "fp16"
+
+paths:
+  log_dir: ${paths.root_dir}/logs/shap_e_ae/chair
+
+test: false

@@ -1,0 +1,24 @@
+# @package _global_
+
+# to execute this experiment run:
+# python accelerate/acc_eval.py eval=example.yaml
+
+defaults:
+  - _self_
+  - data: mnist # choose datamodule with `test_dataloader()` for evaluation
+  - model: mnist
+  - logger: null
+  - trainer: default
+  - paths: default
+  - extras: default
+  - hydra: default
+  # eval configs allow for version control of specific hyperparameters
+  # e.g. best hyperparameters for given model and datamodule
+  - eval: null
+
+task_name: "eval"
+
+tags: ["dev"]
+
+# passing checkpoint path is necessary for evaluation
+ckpt_path: ???

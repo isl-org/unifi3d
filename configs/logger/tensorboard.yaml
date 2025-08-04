@@ -1,0 +1,14 @@
+# https://www.tensorflow.org/tensorboard/
+
+tensorboard:
+  _target_: unifi3d.utils.logger.Logger
+  config:
+    logint: "tensorboard"
+    name: ${experiment_name} # any string, set to "default" if not specified
+    root_dir: "${paths.output_dir}"
+    loggers: ["metric", "image", "hparams"] # "metric", "hparams", "hist", "image", "video", "mesh"
+    gpu_summarize": true # Show used / total GPU memory.
+    print_every_n_seconds: 1.0 # A Log message is being printed every print_every_n_seconds seconds
+    tracked_variables: # The keys should match aim/loggers
+      metric: ["loss", "lr"]
+      image: ["render_gt", "render_rec"]

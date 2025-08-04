@@ -1,0 +1,36 @@
+#@package _global_
+
+defaults:
+  - override /data: shape2vec
+  - override /model: shape2vec_ae_trainer
+  - override /net_encode: shape2vecset_ae
+
+overwrite_model_cfg: true
+experiment_name: "benchmark_final_ckpt"
+profiling: null
+
+# Parameters to set via command line
+ae_id: ae
+cat_id: "Chair"
+cat_id_lower: "chair"
+
+ckpt_path: ${paths.shared_ae_checkpoint_folder}/${cat_id}/shape2vecset_${ae_id}_norm/model.safetensors
+
+data:
+  test_dataset:
+    _target_: unifi3d.data.data_iterators.ShapenetPreprocessedIterator
+    path: ${paths.shapenet_preprocessed_dir}
+    categories:
+      - ${cat_id_lower}
+    mode: "test"
+  batch_size: 1
+
+model:
+  net: ${net_encode}
+
+output_path: ${paths.shared_ae_output_folder}/${cat_id}/shape2vecset_${ae_id}
+representation: shape2vecset
+label_path: null
+encode: true
+plot_mesh: True
+limit: 10000 # high to iterate over the complete test set

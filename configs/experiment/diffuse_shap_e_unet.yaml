@@ -1,0 +1,95 @@
+# @package _global_
+
+# to execute this experiment with single GPU run:
+# accelerate launch scripts/acc_train.py experiment=dualoctree_ae.yaml
+
+# For multi-GPU training run:
+# accelerate launch scripts/acc_train.py trainer=ddp experiment=dualoctree_ae.yaml
+
+# For faster training debugging with fewer samples on a single GPU:
+# accelerate launch scripts/acc_train.py experiment=dualoctree_ae.yaml data.config.num_samples=10
+
+defaults:
+  - override /data: shape
+  - override /model: diffusion
+  - override /net_encode: shap_e_ae_ln
+  - override /net_denoise: unet
+  - override /diffusion_sampler: ddpm
+  - override /trainer: default
+  - override /logger: aim     # default is null.
+
+# this allows you to overwrite only specified parameters
+
+tags: ["train", "shap_e_ae", "diffusion", "unet"]
+seed: 12345
+experiment_name: "diff_shap_e_ae_unet"
+
+logger: 
+  aim: # Should be the same as /logger
+    config: 
+      loggers: ["metric", "image", "hparams"] # List and type of logging implementations 
+      tracked_variables: # The keys should match aim/loggers
+        metric: ["loss", "lr"]
+        image: ["render_gt", "render_rec"]
+
+net_encode:
+  ckpt_path: "/path/to/trained/ae/model.safetensors"
+
+diffusion_sampler:
+  clip_sample: True
+
+net_denoise:
+  patch_embed: 
+    _target_: unifi3d.models.modules.patch_embed.DummyTokenizer
+    n_tokens: 1024
+    hidden_size: 1024
+    reshape_flat_input: True
+  in_channels: 1024
+  out_channels: 1024
+  dims: 1
+
+model:
+  encoder_decoder: ${net_encode}
+  diff_model: ${net_denoise}
+  sampling_scheduler: ${diffusion_sampler}
+  optimizer:
+    _target_: torch.optim.Adam
+    _partial_: true
+    lr: 1e-6
+    weight_decay: 0.0
+
+ckpt_path: ???
+
+data:
+  batch_size: 2
+  dataset:
+    _target_: unifi3d.data.data_iterators.ShapenetIterator
+    path: ${paths.shapenet_dataset_dir}
+    categories: 
+      - "chair"
+    mode: "train"
+  val_dataset:
+    _target_: unifi3d.data.data_iterators.ShapenetIterator
+    path: ${paths.shapenet_dataset_dir}
+    categories: 
+      - "chair"
+    mode: "val"
+  test_dataset:
+    _target_: unifi3d.data.data_iterators.ShapenetIterator
+    path: ${paths.shapenet_dataset_dir}
+    categories: 
+      - "chair"
+    mode: "test"
+
+trainer:
+  max_epochs: 100
+  log_image_every_n_iters: -1
+  log_every_n_iter: 20
+  check_val_every_n_epoch: -1
+  save_checkpoint_every_n_epoch: 10
+  batch_post_process: null
+
+paths:
+  log_dir: ${paths.root_dir}/logs/diffuse_unet_shap_e_ae/chair
+
+test: false
