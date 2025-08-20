@@ -410,5 +410,12 @@ Part of the code was inspired by the following repositories. We thank the author
 
 ## 9: Citation
 
-Reference to our paper will follow soon.
-
+```
+@article{unifi3d,
+  title={{Unifi3D: A Study on 3D Representations for Generation and Reconstruction in a Common Framework}},
+  author={Wiedemann, Nina and Liu, Sainan and Leboutet, Quentin and Gao, Katelyn and Ummenhofer, Benjamin and Paulitsch, Michael and Yuan, Kai},
+  journal={Transactions on Machine Learning Research},
+  year={2025},
+  url={https://openreview.net/forum?id=GQpTWpXILA},
+}
+```
