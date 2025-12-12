@@ -101,7 +101,10 @@ chmod a+x setup_unifi3d.sh
 ./setup_unifi3d.sh
 ```
 
-**Note:** Some components, such as dataset creation and user study scripts, require additional dependencies not installed by the setup script:
+**Note:** 
+By default, the latest Pytorch version is used. For our experiments, we used Pytorch 2.7.1 and torchvision 0.22.1. Please modify the requirements_xxx.txt file to fix a version.
+
+Some components, such as dataset creation and user study scripts, require additional dependencies not installed by the setup script:
 - Blender 4.1 (ensure it is available in your `PATH`)
 
 For alternative installation methods (using venv, manual step-by-step setup, etc.), refer to our [setup guide](docs/setup_guide.md).

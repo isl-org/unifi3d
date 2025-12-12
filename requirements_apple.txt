@@ -1,14 +1,14 @@
 ### Pytorch ###
 # For Apple Silicon, use the official PyTorch macOS wheels without CUDA
 
-torch==2.7.1
-torchvision==0.22.1
-torchaudio==2.7.1
+torch
+torchvision
+torchaudio
 
 ### Pytorch Geometric ###
 torch_geometric
 
--f https://data.pyg.org/whl/torch-2.7.0+cpu.html
+# -f https://data.pyg.org/whl/torch-2.7.0+cpu.html
 pyg_lib
 torch_scatter
 torch_sparse

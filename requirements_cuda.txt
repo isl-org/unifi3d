@@ -1,14 +1,14 @@
 ### Pytorch ###
 
 --extra-index-url https://download.pytorch.org/whl/cu128
-torch==2.7.1
-torchvision==0.22.1
-torchaudio==2.7.1
+torch
+torchvision
+torchaudio
 
 ### Pytorch Geometric ###
 torch_geometric
 
--f https://data.pyg.org/whl/torch-2.7.0+cu128.html
+# -f https://data.pyg.org/whl/torch-2.7.0+cu128.html
 pyg_lib
 torch_scatter
 torch_sparse
