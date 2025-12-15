@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- Meta Tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Unifi3D is a unified framework for evaluating reconstruction and generation performance of 3D representations, comparing quality, computational efficiency, and generalization.">
+    <title>Unifi3D: A Study on 3D Representations for Generation and Reconstruction in a Common Framework</title>
+
+    <!-- Preconnect to external domains -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://stackpath.bootstrapcdn.com">
+    <link rel="preconnect" href="https://unpkg.com">
+
+    <!-- Stylesheets -->
+    <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@300;400;600&display=swap"
+        rel="stylesheet">
+
+    <!-- Bootstrap CSS (latest version) -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+
+    <!-- Custom Stylesheet -->
+    <link rel="stylesheet" href="assets/css/styles.css">
+
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <!-- Favicon -->
+    <link rel="icon" href="assets/table-crop.png" type="image/png">
+
+    <!-- SEO and Social Media Tags -->
+    <meta property="og:site_name" content="Unifi3D" />
+    <meta property="og:type" content="video.other" />
+    <meta property="og:title" content="Unifi3D" />
+    <meta property="og:description" content="A unified framework for evaluating 3D representations in generation and reconstruction pipelines. TMLR 2025." />
+    <meta property="og:url" content="https://isl-org.github.io/Unifi3D" />
+    <meta property="og:image" content="https://isl-org.github.io/Unifi3D/assets/Unifi3D.png" />
+    <meta property="article:publisher" content="https://isl-org.github.io/Unifi3D" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Unifi3D" />
+    <meta name="twitter:description" content="A unified framework for evaluating 3D representations in generation and reconstruction pipelines. TMLR 2025." />
+    <meta name="twitter:url" content="https://isl-org.github.io/Unifi3D" />
+    <meta name="twitter:image" content="https://isl-org.github.io/Unifi3D/assets/Unifi3D.png" />
+
+    <!-- Scripts -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XB3PR2Y1TQ"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+        gtag('config', 'G-XB3PR2Y1TQ');
+    </script>
+    <script type="module" src="https://unpkg.com/@google/model-viewer@2.0.1/dist/model-viewer.min.js"></script>
+</head>
+
+<body>
+
+    <!-- Header Section -->
+    <header class="text-center py-4 bg-light">
+        <div class="container">
+            <h1 class="display-4">
+                <span class="text-primary font-weight-bold">Unifi3D</span>:
+                A Study on 3D Representations for Generation and Reconstruction in a Common Framework
+            </h1>
+            <h2 class="mt-4">TMLR 2025</h2>
+            <div class="mt-4 row justify-content-center">
+
+                <!-- Author Block -->
+                <div class="col-md-2 text-center mb-3">
+                    <h5>
+                        <a href="https://scholar.google.com/citations?user=qC1JKzoAAAAJ&hl=en&oi=ao">Nina Wiedemann*</a>
+                    </h5>
+                    <p>Intel Corp.</p>
+                </div>
+
+                <div class="col-md-2 text-center mb-3">
+                    <h5>
+                        <a href="https://scholar.google.com/citations?user=DKMKhLEAAAAJ&hl=en&oi=ao">Sainan Liu*</a>
+                    </h5>
+                    <p>Intel Corp.</p>
+                </div>
+
+                <div class="col-md-2 text-center mb-3">
+                    <h5>
+                        <a href="https://scholar.google.com/citations?user=SfiqI4AAAAAJ&hl=en&oi=ao">Quentin
+                            Leboutet*</a>
+                    </h5>
+                    <p>Intel Corp.</p>
+                </div>
+
+                <div class="col-md-2 text-center mb-3">
+                    <h5>
+                        <a href="https://scholar.google.com/citations?user=RUT0Hf8AAAAJ&hl=en&oi=ao">Katelyn Gao</a>
+                    </h5>
+                    <p>Intel Corp.</p>
+                </div>
+
+                <div class="col-md-2 text-center mb-3">
+                    <h5>
+                        <a href="https://scholar.google.com/citations?user=QGlp5ywAAAAJ&hl=en&oi=ao">Benjamin
+                            Ummenhofer</a>
+                    </h5>
+                    <p>Intel Corp.</p>
+                </div>
+
+                <div class="col-md-2 text-center mb-3">
+                    <h5>
+                        <a href="https://scholar.google.com/citations?user=Xdy_LywAAAAJ&hl=en&oi=ao">Michael
+                            Paulitsch</a>
+                    </h5>
+                    <p>Intel Corp.</p>
+                </div>
+
+                <div class="col-md-2 text-center mb-3">
+                    <h5>
+                        <a href="https://scholar.google.com/citations?user=8eLlbhMAAAAJ&hl=en&oi=ao">Kai Yuan</a>
+                    </h5>
+                    <p>Intel Corp.</p>
+                </div>
+
+            </div>
+            <p class="text-muted"><small>* Equal contribution</small></p>
+        </div>
+        <p class="lead">
+            <a href="https://arxiv.org/pdf/2509.02474" class="btn btn-outline-dark mx-2">
+                <i class="fas fa-file-alt"></i> Paper
+            </a>
+            <a href="https://github.com/isl-org/Unifi3D" class="btn btn-outline-dark mx-2">
+                <i class="fab fa-github"></i> Code
+            </a>
+            <a href="https://drive.google.com/file/d/1QNvrNmQXo5F3ZKoq9ZdQ0iGaIp3BwrVn/view?usp=share_link" class="btn btn-outline-dark mx-2">
+                <i class="fas fa-video"></i> Video
+            </a>
+        </p>
+    </header>
+
+    <main>
+    <!-- Video Gallery Section -->
+    <section class="py-4">
+        <div class="container">
+            <h2 class="text-center mb-5">Unifi3D Compares Tensorial Representations within 3D Generative Pipelines</h2>
+            <div class="embed-responsive embed-responsive-16by9">
+                <video class="embed-responsive-item" autoplay loop muted playsinline preload="metadata" aria-label="Demonstration of Unifi3D comparing tensorial representations">
+                    <source src="assets/mosaic.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            </div>
+        </div>
+    </section>
+
+    <!-- Abstract Section -->
+    <section class="py-4 bg-light">
+        <div class="container">
+            <h2 class="mb-4">Abstract</h2>
+            <p class="text-justify">
+                Unifi3D is a unified framework for evaluating the reconstruction and generation performance of 3D
+                representations. We compare these representations based on multiple criteria: quality, computational
+                efficiency, and generalization performance. Beyond standard model benchmarking, our experiments aim to
+                derive best practices over all steps involved in the 3D generation pipeline, including preprocessing,
+                mesh reconstruction, compression with autoencoders, and generation. Our findings highlight that
+                reconstruction errors significantly impact overall performance, underscoring the need to evaluate
+                generation and reconstruction jointly.
+            </p>
+        </div>
+    </section>
+
+    <!-- Key Contributions Section -->
+    <section class="py-4">
+        <div class="container">
+            <h2 class="mb-4">Key Contributions</h2>
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 border-primary">
+                        <div class="card-body text-center">
+                            <i class="fas fa-cubes fa-3x text-primary mb-3"></i>
+                            <h5 class="card-title">Unified Comparison</h5>
+                            <p class="card-text">First comprehensive comparison of 6 tensorial 3D representations (SDF, Voxel, Triplane, NeRF, DualOctree, Shape2VecSet) within a single framework.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 border-primary">
+                        <div class="card-body text-center">
+                            <i class="fas fa-cogs fa-3x text-primary mb-3"></i>
+                            <h5 class="card-title">Pipeline Analysis</h5>
+                            <p class="card-text">Systematic study of all pipeline components: preprocessing, mesh extraction, autoencoder compression, and diffusion-based generation.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 border-primary">
+                        <div class="card-body text-center">
+                            <i class="fas fa-lightbulb fa-3x text-primary mb-3"></i>
+                            <h5 class="card-title">Best Practices</h5>
+                            <p class="card-text">Actionable insights on representation selection, architecture choices, and training strategies for optimal 3D generation quality.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+
+    <!-- Overview Section -->
+    <section class="py-4 bg-light">
+        <div class="container">
+            <h2 class="mb-4">Method Overview</h2>
+            <div class="text-center mb-4">
+                <img src="assets/overview.png" alt="Unifi3D method overview showing the diffusion-based 3D generation pipeline" class="img-fluid" loading="lazy">
+            </div>
+            <p class="text-justify">Diffusion-based 3D generation pipelines share a common structure that we systematically analyze:</p>
+            <ol class="text-justify" type="a">
+                <li><strong>Preprocessing:</strong> The input mesh is transformed into a suitable 3D representation (SDF, Voxel, Triplane, NeRF, DualOctree, or Shape2VecSet).</li>
+                <li><strong>Compression:</strong> An autoencoder is pre-trained to compress the representation into a compact latent vector.</li>
+                <li><strong>Generation:</strong> A diffusion model (U-Net or DiT) is trained to generate new latents by learning to denoise.</li>
+                <li><strong>Reconstruction:</strong> The latent is decoded back to the target representation and converted to a mesh using Marching Cubes or similar algorithms.</li>
+            </ol>
+        </div>
+    </section>
+
+    <!-- Representations Section -->
+    <section class="py-4">
+        <div class="container">
+            <h2 class="mb-4">3D Representations Compared</h2>
+            <p class="text-justify mb-4">We evaluate six major tensorial representations used in modern 3D generative models:</p>
+            <div class="row">
+                <div class="col-md-4 col-sm-6 mb-3">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title"><i class="fas fa-th-large text-info"></i> SDF Grid</h5>
+                            <p class="card-text small">Dense signed distance field on a regular 3D grid. Excellent reconstruction quality and out-of-distribution generalization.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 col-sm-6 mb-3">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title"><i class="fas fa-cube text-info"></i> Voxel Grid</h5>
+                            <p class="card-text small">Binary or continuous occupancy grid. Simple but effective, with good balance of quality and efficiency.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 col-sm-6 mb-3">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title"><i class="fas fa-layer-group text-info"></i> Triplane</h5>
+                            <p class="card-text small">Three axis-aligned feature planes. Memory efficient but struggles with out-of-distribution shapes.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 col-sm-6 mb-3">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title"><i class="fas fa-broadcast-tower text-info"></i> NeRF</h5>
+                            <p class="card-text small">Neural radiance field with density prediction. Flexible but lower reconstruction fidelity.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 col-sm-6 mb-3">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title"><i class="fas fa-tree text-info"></i> DualOctree</h5>
+                            <p class="card-text small">Hierarchical adaptive octree structure. Best generation metrics but limited generalization.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 col-sm-6 mb-3">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title"><i class="fas fa-vector-square text-info"></i> Shape2VecSet</h5>
+                            <p class="card-text small">Cross-attention based point set encoding. Resolution-independent with good quality.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+  <!-- Key Results -->
+  <section class="py-4 bg-light" id="results">
+    <div class="container">
+      <h2 class="mb-4">Key Results</h2>
+
+      <h3 class="mt-4">Unconditional Generation (ShapeNet)</h3>
+      <p class="text-muted">Best per-representation models evaluated on ShapeNet categories. <strong>COV</strong> (Coverage) measures diversity, <strong>MMD</strong> (Minimum Matching Distance) measures quality, and <strong>1-NNA</strong> measures distribution similarity (optimal at 0.5).</p>
+      <table class="table table-hover">
+        <thead class="thead-light">
+          <tr>
+            <th scope="col">Method</th>
+            <th scope="col">COV ↑</th>
+            <th scope="col">MMD ↓</th>
+            <th scope="col">1-NNA → 0.5</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>DualOctree (VAE, U-Net)</td><td>0.365</td><td>0.031</td><td>0.824</td></tr>
+          <tr><td>SDF (AE, DiT)</td><td>0.357</td><td>0.032</td><td>0.860</td></tr>
+          <tr><td>3DShape2VecSet</td><td>0.344</td><td>0.033</td><td>0.864</td></tr>
+          <tr><td>Triplane (AE, U-Net)</td><td>0.297</td><td>0.036</td><td>0.921</td></tr>
+          <tr><td>Voxel (AE, DiT)</td><td>0.319</td><td>0.040</td><td>0.937</td></tr>
+        </tbody>
+      </table>
+
+    <div class="row justify-content-center">
+        <div class="col-md-6 text-center mb-3">
+            <img src="assets/r2.png" alt="Unconditional generation results comparison" class="img-fluid" loading="lazy">
+        </div>
+        <div class="col-md-6 text-center mb-3">
+            <img src="assets/r6.png" alt="Generation quality metrics visualization" class="img-fluid" loading="lazy">
+        </div>
+    </div>
+
+      <h3>Reconstruction Quality (ShapeNet)</h3>
+      <p>Average over airplane/car/chair (F-score ↑, CD ↓, NC ↑). OOD generalization shown for Chair→Airplane.</p>
+      <table class="table table-hover">
+        <thead class="thead-light">
+          <tr>
+            <th scope="col">Representation</th><th scope="col">F-score</th><th scope="col">CD (×1e−4)</th><th scope="col">NC</th>
+            <th scope="col">OOD F-score</th><th scope="col">OOD CD</th><th scope="col">OOD NC</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>SDF AE</td><td>88.434±6.58</td><td>0.012±0.00</td><td>0.827±0.06</td><td>91.123±6.02</td><td>0.010±0.01</td><td>0.843±0.05</td></tr>
+          <tr><td>Voxel AE</td><td>85.666±10.54</td><td>0.016±0.01</td><td>0.787±0.06</td><td>85.602±9.48</td><td>0.017±0.01</td><td>0.800±0.05</td></tr>
+          <tr><td>Shape2VecSet AE</td><td>79.37±17.04</td><td>0.023±0.02</td><td>0.776±0.07</td><td>75.338±8.87</td><td>0.022±0.01</td><td>0.717±0.07</td></tr>
+          <tr><td>Triplane AE</td><td>66.445±16.06</td><td>0.028±0.02</td><td>0.759±0.08</td><td>41.69±11.57</td><td>0.073±0.03</td><td>0.688±0.07</td></tr>
+          <tr><td>DualOctree VAE</td><td>76.122±13.44</td><td>0.020±0.01</td><td>0.766±0.07</td><td>48.38±11.39</td><td>0.047±0.02</td><td>0.677±0.08</td></tr>
+          <tr><td>NeRF AE</td><td>58.44±13.22</td><td>0.034±0.02</td><td>0.723±0.07</td><td>26.229±11.64</td><td>0.107±0.04</td><td>0.589±0.05</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- Key Findings Section -->
+  <section class="py-4">
+    <div class="container">
+      <h2 class="mb-4">Key Findings</h2>
+      <div class="row">
+        <div class="col-md-6">
+          <div class="alert alert-info" role="alert">
+            <h5><i class="fas fa-chart-line"></i> Generation Quality</h5>
+            <ul class="mb-0">
+              <li><strong>DualOctree</strong> achieves best generation metrics (COV: 0.365, 1-NNA: 0.824)</li>
+              <li><strong>DiT</strong> architectures generally outperform U-Net for generation</li>
+              <li>VAE regularization improves generation quality over standard AE</li>
+            </ul>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="alert alert-success" role="alert">
+            <h5><i class="fas fa-redo"></i> Reconstruction Quality</h5>
+            <ul class="mb-0">
+              <li><strong>SDF</strong> provides best reconstruction fidelity (F-score: 88.4)</li>
+              <li>SDF and Voxel show excellent out-of-distribution generalization</li>
+              <li>Triplane and DualOctree struggle with unseen shape categories</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="row mt-3">
+        <div class="col-md-6">
+          <div class="alert alert-warning" role="alert">
+            <h5><i class="fas fa-exclamation-triangle"></i> Critical Insight</h5>
+            <p class="mb-0">Reconstruction errors propagate through the entire pipeline. A representation with poor reconstruction will underperform in generation regardless of the diffusion model quality.</p>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="alert alert-secondary" role="alert">
+            <h5><i class="fas fa-balance-scale"></i> Trade-offs</h5>
+            <p class="mb-0">No single representation dominates all metrics. <strong>SDF</strong> offers the best balance for applications requiring both quality and generalization.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+    <!-- Shape Generation Section -->
+    <section class="py-4">
+        <div class="container">
+            <h2 class="mb-4 text-center">Generated 3D Samples</h2>
+            <p class="text-center text-muted mb-4">Examples of unconditionally generated 3D meshes from our best-performing models.</p>
+            <div class="row">
+
+                <!-- Video Item 0 -->
+                <div class="col-md-4 col-sm-6 mb-4">
+                    <div class="embed-responsive embed-responsive-4by3">
+                        <video class="embed-responsive-item" autoplay loop muted playsinline preload="metadata" aria-label="Generated 3D mesh turntable view 1">
+                            <source src="assets/mosaique/mesh_1_turntable.mp4" type="video/mp4">
+                        </video>
+                    </div>
+                </div>
+
+                <!-- Video Item 1 -->
+                <div class="col-md-4 col-sm-6 mb-4">
+                    <div class="embed-responsive embed-responsive-4by3">
+                        <video class="embed-responsive-item" autoplay loop muted playsinline preload="metadata" aria-label="Generated 3D mesh turntable view 2">
+                            <source src="assets/mosaique/mesh_6_turntable.mp4" type="video/mp4">
+                        </video>
+                    </div>
+                </div>
+
+                <!-- Video Item 2 -->
+                <div class="col-md-4 col-sm-6 mb-4">
+                    <div class="embed-responsive embed-responsive-4by3">
+                        <video class="embed-responsive-item" autoplay loop muted playsinline preload="metadata" aria-label="Generated 3D mesh turntable view 3">
+                            <source src="assets/mosaique/mesh_18_turntable.mp4" type="video/mp4">
+                        </video>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="row">
+
+                <!-- Video Item 3 -->
+                <div class="col-md-4 col-sm-6 mb-4">
+                    <div class="embed-responsive embed-responsive-4by3">
+                        <video class="embed-responsive-item" autoplay loop muted playsinline preload="metadata" aria-label="Generated 3D mesh turntable view 4">
+                            <source src="assets/mosaique/mesh_36_turntable.mp4" type="video/mp4">
+                        </video>
+                    </div>
+                </div>
+
+                <!-- Video Item 4 -->
+                <div class="col-md-4 col-sm-6 mb-4">
+                    <div class="embed-responsive embed-responsive-4by3">
+                        <video class="embed-responsive-item" autoplay loop muted playsinline preload="metadata" aria-label="Generated 3D mesh turntable view 5">
+                            <source src="assets/mosaique/mesh_75_turntable.mp4" type="video/mp4">
+                        </video>
+                    </div>
+                </div>
+
+                <!-- Video Item 5 -->
+                <div class="col-md-4 col-sm-6 mb-4">
+                    <div class="embed-responsive embed-responsive-4by3">
+                        <video class="embed-responsive-item" autoplay loop muted playsinline preload="metadata" aria-label="Generated 3D mesh turntable view 6">
+                            <source src="assets/mosaique/mesh_100_turntable.mp4" type="video/mp4">
+                        </video>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+
+
+    <!-- Citation Section -->
+    <section class="py-4 bg-light">
+        <div class="container">
+            <h2 class="mb-4">Citation</h2>
+            <pre class="bg-white p-3">
+@article{unifi3d,
+  title={{Unifi3D: A Study on 3D Representations for Generation and Reconstruction in a Common Framework}},
+  author={Wiedemann, Nina and Liu, Sainan and Leboutet, Quentin and Gao, Katelyn and Ummenhofer, Benjamin and Paulitsch, Michael and Yuan, Kai},
+  journal={Transactions on Machine Learning Research},
+  year={2025},
+  url={https://openreview.net/forum?id=GQpTWpXILA},
+}
+            </pre>
+        </div>
+    </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="py-4 text-center">
+        <div class="container">
+            <p>&copy; 2025 Unifi3D. This webpage is inspired by <a href="https://dreamfusion3d.github.io/" rel="noopener noreferrer">DreamFusion</a>.</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <!-- jQuery and Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.bundle.min.js"></script>
+
+</body>
+
+</html>
