@@ -24,7 +24,7 @@ vector-quantize-pytorch
 
 ### Hydra ###
 
-hydra-core==1.3.2
+hydra-core==1.3.4
 hydra-colorlog==1.2.0
 hydra-optuna-sweeper==1.2.0
 hydra-ray-launcher==1.2.1
